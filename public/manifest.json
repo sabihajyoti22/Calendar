@@ -1,0 +1,9 @@
+{
+  "name": "Test",
+  "short_name": "Test",
+  "start_url": "../index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#41D1FF",
+  "orientation": "portrait-primary"
+}

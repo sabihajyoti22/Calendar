@@ -21,7 +21,7 @@
                 </svg>
             </button>
 
-            <div class="order-3 md:order-1 w-full h-[450px] md:w-[400px] md:h-[600px] relative">
+            <div class="order-3 md:order-1 w-full h-[500px] md:w-[400px] md:h-[550px] relative">
                 <Calendar :month="item" :year="year" v-for="(item, index) in cards" :key="item"
                     :style="{ transform: `scale(${4 / (4 + (index * 0.1))}) translate(0px, ${index * 25}px)`, opacity: `${(4 - index) / 4}` }"
                     class="w-full h-fu absolute ease-in-out duration-300" :class="{ 'z-50': index === 0 }" />

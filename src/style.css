@@ -34,11 +34,11 @@
     @apply font-lilto text-3xl leading-9 tracking-wider
   }
 
-  .text-title4xl {
-    @apply font-lilto text-4xl font-semibold tracking-wider
+  .text-title3 {
+    @apply font-lilto text-4xl tracking-wider
   }
 
-  .text-title5xl {
-    @apply font-lilto text-5xl font-semibold leading-snug tracking-wider
+  .text-title4 {
+    @apply font-lilto text-5xl leading-snug tracking-wider
   }
 }

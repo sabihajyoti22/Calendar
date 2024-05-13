@@ -4,7 +4,7 @@
             <div class="text-title md:text-title1">Calendar</div>
             <div
                 class="text-caption md:text-title flex items-center gap-1 p-1 rounded-md hover:bg-background hover:bg-opacity-50 cursor-pointer">
-                <div>2024</div>
+                <div>{{ year }}</div>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                     <path d="M7.5 8L6 9.5L12.0703 15.5703L18.1406 9.5L16.6406 8L12.0703 12.5703L7.5 8Z"
                         fill="#ffffff" />
@@ -22,7 +22,7 @@
             </button>
 
             <div class="order-3 md:order-1 w-full h-[450px] md:w-[400px] md:h-[600px] relative">
-                <Calendar :month="item" v-for="(item, index) in cards" :key="item"
+                <Calendar :month="item" :year="year" v-for="(item, index) in cards" :key="item"
                     :style="{ transform: `scale(${4 / (4 + (index * 0.1))}) translate(0px, ${index * 25}px)`, opacity: `${(4 - index) / 4}` }"
                     class="w-full h-fu absolute ease-in-out duration-300" :class="{ 'z-50': index === 0 }" />
 
@@ -48,8 +48,8 @@ export default {
     },
     data() {
         return {
-            cards: [1, 2, 3, 4],
-            count: 1
+            year: 2024,
+            cards: [1, 2, 3, 4]
         }
     },
     methods: {

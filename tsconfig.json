@@ -20,14 +20,7 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-    /*Removed error TS7016*/
-    "baseUrl": ".",
-    "paths": {
-      "*": [
-        "types/*"
-      ]
-    }
+    "noFallthroughCasesInSwitch": true
   },
   "include": [
     "src/**/*.ts",

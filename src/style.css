@@ -26,6 +26,10 @@
     @apply font-lilto text-base leading-6 tracking-wider
   }
 
+  .text-title0 {
+    @apply font-lilto text-lg leading-6 tracking-wider
+  }
+
   .text-title1 {
     @apply font-lilto text-2xl leading-8 tracking-wider
   }
@@ -41,4 +45,23 @@
   .text-title4 {
     @apply font-lilto text-5xl leading-snug tracking-wider
   }
+}
+
+@layer components {
+  .overlay {
+    @apply fixed inset-0 bg-secondary bg-opacity-60 z-50 w-full h-full flex justify-center items-center
+  }
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+#scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+#scrollbar {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }

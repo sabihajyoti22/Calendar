@@ -24,7 +24,8 @@
             <div class="order-3 md:order-1 w-full h-[500px] md:w-[400px] md:h-[550px] relative">
                 <Calendar :month="item" :year="year" v-for="(item, index) in cards" :key="item"
                     :style="{ transform: `scale(${4 / (4 + (index * 0.1))}) translate(0px, ${index * 25}px)`, opacity: `${(4 - index) / 4}` }"
-                    class="w-full h-fu absolute ease-in-out duration-300" :class="{ 'z-50': index === 0 }" />
+                    class="w-full h-fu absolute ease-in-out duration-300" :class="{ 'z-50': index === 0 }"
+                    @selectedDate="getDate" />
 
             </div>
 
@@ -37,7 +38,7 @@
             </button>
         </div>
 
-        <div class="md:ml-12 mb-3 md:mb-6">
+        <div v-if="events.length" class="md:ml-12 mb-3 md:mb-6">
             <div class="hidden md:flex justify-between items-center mb-3 md:mb-5">
                 <div class="text-title md:text-title0 text-white">Upcoming Events</div>
                 <div class="flex gap-2">
@@ -69,15 +70,9 @@
             </div>
         </div>
 
-        <div class="flex justify-center">
-            <button @click="createEvent"
-                class="text-secondary text-body1 md:text-title0 bg-white px-6 py-3 rounded-md">+ Create
-                Events</button>
-        </div>
-
         <!-- Modal -->
         <div v-if="openModal" class="overlay">
-            <CreateEvent />
+            <CreateEvent :selected-date="selectedDate" @send-data="getEvent" @close="closeModal" />
         </div>
     </div>
 </template>
@@ -94,85 +89,47 @@ export default {
     data() {
         return {
             year: 2024,
-            cards: [1, 2, 3, 4],
-            events: [
-                {
-                    day: 'TUE',
-                    name: 'Event Name',
-                    time: '3AM - 8AM'
-                },
-                {
-                    day: 'TUE',
-                    name: 'Event Name',
-                    time: '3AM - 8AM'
-                },
-                {
-                    day: 'TUE',
-                    name: 'Event Name',
-                    time: '3AM - 8AM'
-                },
-                {
-                    day: 'TUE',
-                    name: 'Event Name',
-                    time: '3AM - 8AM'
-                },
-                {
-                    day: 'TUE',
-                    name: 'Event Name',
-                    time: '3AM - 8AM'
-                },
-                {
-                    day: 'TUE',
-                    name: 'Event Name',
-                    time: '3AM - 8AM'
-                },
-                {
-                    day: 'TUE',
-                    name: 'Event Name',
-                    time: '3AM - 8AM'
-                },
-                {
-                    day: 'TUE',
-                    name: 'Event Name',
-                    time: '3AM - 8AM'
-                },
-                {
-                    day: 'TUE',
-                    name: 'Event Name',
-                    time: '3AM - 8AM'
-                },
-                {
-                    day: 'TUE',
-                    name: 'Event Name',
-                    time: '3AM - 8AM'
-                },
-                {
-                    day: 'TUE',
-                    name: 'Event Name',
-                    time: '3AM - 8AM'
-                },
-                {
-                    day: 'TUE',
-                    name: 'Event Name',
-                    time: '3AM - 8AM'
-                }
-            ],
+            cards: [] as number[],
+            events: [] as event[],
             scrollBar: 0 as any,
-            openModal: false as boolean
+            openModal: false as boolean,
+            selectedDate: {} as date,
+            currentMonth: (new Date().getMonth()) + 1,
+            db: null as any,
+            objectStore: null as any
         }
     },
     mounted() {
         this.scrollBar = document.getElementById('scrollbar')
+        this.cards = Array.from(Array(4), () => {
+            return this.currentMonth++;
+        })
+        const request = indexedDB.open("Calendar", 1)
+
+        request.onerror = (err: any) => {
+            console.error(`Database error: ${err.target.errorCode}`);
+        }
+
+        request.onsuccess = (evt: any) => {
+            this.db = evt.target.result
+            const transaction = this.db.transaction("events", "readwrite")
+            this.objectStore = transaction.objectStore("events")
+        }
+        request.onupgradeneeded = (evt: any) => {
+            evt.target.result.createObjectStore("events", { keyPath: "id" })
+        }
     },
     methods: {
         previous() {
             if (this.cards[0] !== 1) {
+                this.currentMonth = 0
                 this.cards.unshift(this.cards[this.cards.length - 1] - 4)
                 this.cards.pop()
             }
         },
         next() {
             if (this.cards[0] !== 12) {
+                this.currentMonth = 0
                 this.cards.shift()
                 this.cards.push(this.cards[this.cards.length - 1] + 1)
             }
@@ -188,8 +145,18 @@ export default {
                 this.scrollBar.scrollLeft -= 212
             }
         },
-        createEvent() {
+        getDate(date: date) {
             this.openModal = true
+            this.selectedDate = date
+        },
+        getEvent(event: event) {
+            event.id = new Date()
+            this.events.push(event)
+            console.log(this.objectStore)
+            this.closeModal()
+        },
+        closeModal() {
+            this.openModal = false
         }
     }
 }

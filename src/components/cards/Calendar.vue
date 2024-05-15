@@ -12,7 +12,7 @@
       <div class="text-center" v-for="day in startDay" :key="day" />
       <div
         class="text-center my-2 hover:bg-pink hover:text-white hover:cursor-pointer py-[5px] md:py-[9px] rounded-full"
-        v-for="day in daysInMonths" :key="day + '%'">
+        v-for="day in daysInMonths" :key="day + '%'" @click="selectDate(day)">
         {{ day }}
       </div>
     </div>
@@ -46,9 +46,25 @@ export default {
       return new Date(this.year, (this.month - 1)).toLocaleString("default", { month: "long" })
     }
   },
+  emits: ['selectedDate'],
   data() {
     return {
-      weeks: ["S", "M", "T", "W", "T", "F", "S"]
+      weeks: ["S", "M", "T", "W", "T", "F", "S"],
+      selectedDate: {
+        year: 0,
+        month: 0,
+        day: 0
+      } as date
+    }
+  },
+  methods: {
+    selectDate(day: number) {
+      this.selectedDate = {
+        year: this.year,
+        month: this.month,
+        day: day
+      }
+      this.$emit('selectedDate', this.selectedDate)
     }
   }
 }

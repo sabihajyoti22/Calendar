@@ -5,14 +5,19 @@ const routes = [
     path: '/',
     name: 'home',
     component: () => import('../views/Home.vue'),
+  },
+  {
+    path: '/auth',
+    name: 'auth',
+    component: () => import('../views/Auth.vue'),
   }
 ]
 
 const routerHistory = createWebHistory()
-const router = new createRouter({
+const router = new (createRouter as any)({
   routes,
   history: routerHistory,
-  scrollBehavior(to, from, savedPosition) {
+  scrollBehavior(to: any, from: any, savedPosition: any) {
     if (savedPosition) {
       return savedPosition
     } else {

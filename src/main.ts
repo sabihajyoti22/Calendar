@@ -2,9 +2,10 @@ import { createApp } from 'vue'
 import './style.css'
 import App from './App.vue'
 import router from "./router"
+import apiCallsPlugin from './plugin/apiCalls.ts'
 
 // if ('serviceWorker' in navigator) {
-//   navigator.serviceWorker.register('/serviceWorker.js')
+//   navigator.serviceWorker.register('/worker/ServiceWorker.js')
 //     .then(() => {
 //       console.log("Service worker is registered")
 //     })
@@ -17,4 +18,5 @@ import router from "./router"
 
 const app = createApp(App)
 app.use(router)
+app.use(apiCallsPlugin)
 app.mount('#app')

@@ -4,15 +4,15 @@
       {{ currentMonthName }}
     </div>
 
-    <div class="grid grid-cols-7 gap-x-2">
+    <div class="grid grid-cols-7 gap-x-2 text-title">
       <div v-for="week in weeks" :key="week" class="text-center font-semibold text-gray-600">
         {{ week }}
       </div>
 
       <div class="text-center" v-for="day in startDay" :key="day" />
-      <div
+      <div :class="{ 'bg-secondary text-white': new Date().getDate() === day }"
         class="text-center my-2 hover:bg-pink hover:text-white hover:cursor-pointer py-[5px] md:py-[9px] rounded-full"
-        v-for="day in daysInMonths" :key="day + '%'" @click="selectDate(day)">
+        v-for="day in   daysInMonths  " :key="day + '%'" @click="selectDate(day)">
         {{ day }}
       </div>
     </div>

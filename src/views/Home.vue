@@ -63,16 +63,30 @@
             <div id="scrollbar" class="flex items-center gap-3 overflow-x-scroll scroll-smooth">
                 <div class="bg-white px-3 py-2 rounded-lg w-[200px] shrink-0" v-for="(item, index) in events"
                     :key="index + '&&'">
-                    <div class="text-caption md:text-body1 text-pink">{{ item.day }}</div>
-                    <div class="text-title md:text-title0 line-clamp-1">Event Name</div>
-                    <div class="text-gray-400 text-body1 md:text-title">3AM - 8AM</div>
+                    <div class="flex justify-between">
+                        <div class="text-caption md:text-body1 text-pink">{{ `${item.day} ${months[item.month - 1]}` }}
+                        </div>
+
+                        <div>
+                            <button class="h-6 w-6 rounded-full grid place-content-center hover:bg-background group">
+                                <svg class="fill-[#7A6FCB] group-hover:fill-white" xmlns="http://www.w3.org/2000/svg"
+                                    width="14" height="14" viewBox="0 0 14 14">
+                                    <path
+                                        d="M11.1906 5.43884L11.8878 4.74169C12.6118 4.01769 12.6118 2.83941 11.8878 2.11512C11.5372 1.76484 11.0712 1.57227 10.5744 1.57227C10.0775 1.57227 9.61121 1.76512 9.26092 2.11541L8.56407 2.81227L11.1906 5.43884ZM7.95807 3.41827L2.79549 8.58084C2.68549 8.69084 2.60178 8.82655 2.55321 8.97369L1.59607 11.8654C1.54492 12.0191 1.58521 12.1886 1.69978 12.3031C1.78178 12.3848 1.89092 12.4286 2.00292 12.4286C2.04807 12.4286 2.09349 12.4214 2.13778 12.4068L5.02864 11.4494C5.17635 11.4008 5.31235 11.3171 5.42235 11.2068L10.5846 6.04455L7.95807 3.41827Z" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="text-title md:text-title0 line-clamp-1">{{ item.title }}</div>
+                    <div class="text-gray-400 text-body1 md:text-title">{{ `${item.currentHour} : ${item.currentMintue}
+                        ${item.time}` }}</div>
                 </div>
             </div>
         </div>
 
         <!-- Modal -->
         <div v-if="openModal" class="overlay">
-            <CreateEvent :selected-date="selectedDate" @send-data="getEvent" @close="closeModal" />
+            <CreateEvent :selected-date="selectedDate" @send-data="createEvent" @close="closeModal" />
         </div>
     </div>
 </template>
@@ -95,6 +109,7 @@ export default {
             openModal: false as boolean,
             selectedDate: {} as date,
             currentMonth: (new Date().getMonth()) + 1,
+            months: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
             db: null as any,
             objectStore: null as any,
             transaction: null as any
@@ -105,26 +120,39 @@ export default {
         this.cards = Array.from(Array(4), () => {
             return this.currentMonth++;
         })
-
-        const request = indexedDB.open("Calendar", 1)
-
-        request.onerror = (err: any) => {
-            console.error(`Database error: ${err.target.errorCode}`);
-        }
-
-        request.onsuccess = (evt: any) => {
-            this.db = evt.target.result
-            console.log('onsuccess')
-        }
-        request.onupgradeneeded = (evt: any) => {
-            // onupgradeneeded: canbe used to create and delete object stores and build and remove indices
-            this.db = evt.target.result
-            this.objectStore = this.db.createObjectStore("events", { keyPath: "id" })
-            this.objectStore.createIndex("id", "id", { unique: true })
-            console.log("onupgradeneeded")
-        }
+        this.initiateIndexedDB()
     },
     methods: {
+        initiateIndexedDB() {
+            const request = indexedDB.open("Calendar", 1)
+
+            request.onerror = (err: any) => {
+                console.error(`Database error: ${err.target.errorCode}`);
+            }
+
+            request.onsuccess = (evt: any) => {
+                this.db = evt.target.result
+                this.getAllEvents()
+            }
+
+            request.onupgradeneeded = (evt: any) => {
+                this.db = evt.target.result
+                this.objectStore = this.db.createObjectStore("events", { keyPath: "id" })
+                this.objectStore.createIndex("id", "id", { unique: true })
+            }
+        },
+        getAllEvents() {
+            const request = this.db.transaction('events').objectStore('events').getAll();
+
+            request.onerror = (err: any) => {
+                console.error(`Error to get all events: ${err}`)
+            }
+
+            request.onsuccess = () => {
+                this.events = JSON.parse(JSON.stringify(request.result))
+                console.table(request.result)
+            }
+        },
         previous() {
             if (this.cards[0] !== 1) {
                 this.currentMonth = 0
@@ -154,7 +182,7 @@ export default {
             this.openModal = true
             this.selectedDate = date
         },
-        getEvent(event: event) {
+        createEvent(event: event) {
             event.id = Date.now()
             this.events.push(event)
 
@@ -162,12 +190,12 @@ export default {
 
             this.transaction.onerror = (event: any) => {
                 console.log("A error has occured during transaction")
-            };
+            }
 
-            const objectStore = this.transaction.objectStore("events")
-            const request = objectStore.add(JSON.parse(JSON.stringify(event)));
+            this.objectStore = this.transaction.objectStore("events")
+            const request = this.objectStore.add(JSON.parse(JSON.stringify(event)));
             request.onsuccess = (evt: any) => {
-                console.log(evt.target.result)
+                // console.log(evt.target.result)
             }
 
             this.closeModal()

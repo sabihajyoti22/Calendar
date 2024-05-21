@@ -5,6 +5,6 @@ type event = {
   currentMintue: number
   time: string,
   year?: number
-  month?: number
+  month: number
   day?: number
 }

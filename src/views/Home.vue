@@ -96,7 +96,8 @@ export default {
             selectedDate: {} as date,
             currentMonth: (new Date().getMonth()) + 1,
             db: null as any,
-            objectStore: null as any
+            objectStore: null as any,
+            transaction: null as any
         }
     },
     mounted() {
@@ -104,6 +105,7 @@ export default {
         this.cards = Array.from(Array(4), () => {
             return this.currentMonth++;
         })
+
         const request = indexedDB.open("Calendar", 1)
 
         request.onerror = (err: any) => {
@@ -112,11 +114,14 @@ export default {
 
         request.onsuccess = (evt: any) => {
             this.db = evt.target.result
-            const transaction = this.db.transaction("events", "readwrite")
-            this.objectStore = transaction.objectStore("events")
+            console.log('onsuccess')
         }
         request.onupgradeneeded = (evt: any) => {
-            evt.target.result.createObjectStore("events", { keyPath: "id" })
+            // onupgradeneeded: canbe used to create and delete object stores and build and remove indices
+            this.db = evt.target.result
+            this.objectStore = this.db.createObjectStore("events", { keyPath: "id" })
+            this.objectStore.createIndex("id", "id", { unique: true })
+            console.log("onupgradeneeded")
         }
     },
     methods: {
@@ -150,9 +155,21 @@ export default {
             this.selectedDate = date
         },
         getEvent(event: event) {
-            event.id = new Date()
+            event.id = Date.now()
             this.events.push(event)
-            console.log(this.objectStore)
+
+            this.transaction = this.db.transaction(["events"], "readwrite")
+
+            this.transaction.onerror = (event: any) => {
+                console.log("A error has occured during transaction")
+            };
+
+            const objectStore = this.transaction.objectStore("events")
+            const request = objectStore.add(JSON.parse(JSON.stringify(event)));
+            request.onsuccess = (evt: any) => {
+                console.log(evt.target.result)
+            }
+
             this.closeModal()
         },
         closeModal() {

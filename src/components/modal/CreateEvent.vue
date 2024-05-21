@@ -16,9 +16,9 @@
               fill="#7A6FCB" />
           </svg>
         </button>
-        <div id="scrollbar" class="max-h-[108px] overflow-y-hidden hour snap-y snap-mandator">
+        <div id="scrollbar" class="max-h-[108px] overflow-y-hidden hour">
           <div v-for="hour in  hours " :key="hour"
-            class="text-title1 text-secondary text-center ease-in-out duration-300 snap-start py-1"
+            class="text-title1 text-secondary text-center ease-in-out duration-500 py-1"
             :style="{ transform: `scale(${hour == event.currentHour ? 1 : 0.7})`, opacity: `${hour == event.currentHour ? 1 : 0.5}` }">
             {{ hour < 10 ? '0' + hour : hour }} </div>
           </div>
@@ -30,6 +30,10 @@
           </button>
         </div>
 
+        <div class="text-title1 text-secondary">
+          :
+        </div>
+
         <div class="grid place-content-center">
           <button @click="decreaseMintue" class="rotate-90">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -37,9 +41,9 @@
                 fill="#7A6FCB" />
             </svg>
           </button>
-          <div id="scrollbar" class="max-h-[108px] overflow-y-hidden mintue snap-y snap-mandator">
+          <div id="scrollbar" class="max-h-[108px] overflow-y-hidden mintue">
             <div v-for="mintue in  mintues " :key="mintue"
-              class="text-title1 text-secondary text-center ease-in-out duration-300 snap-start py-1"
+              class="text-title1 text-secondary text-center ease-in-out duration-500 py-1"
               :style="{ transform: `scale(${mintue == event.currentMintue ? 1 : 0.7})`, opacity: `${mintue == event.currentMintue ? 1 : 0.5}` }">
               {{ mintue < 10 ? '0' + mintue : mintue }} </div>
             </div>
@@ -99,7 +103,7 @@ export default {
   },
   mounted() {
     this.hourScroll = document.querySelector('.hour')
-    this.hourScroll.scrollTop = 360 / 2
+    this.hourScroll.scrollTop = 330 / 2
     this.mintueScroll = document.querySelector('.mintue')
     this.mintueScroll.scrollTop = 2250 / 2
   },

@@ -2,13 +2,18 @@
     <div>
         <div class="flex justify-between items-center text-white mb-5">
             <div class="text-title md:text-title1">Calendar</div>
-            <div
-                class="text-caption md:text-title flex items-center gap-1 p-1 rounded-md hover:bg-background hover:bg-opacity-50 cursor-pointer">
-                <div>{{ year }}</div>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <path d="M7.5 8L6 9.5L12.0703 15.5703L18.1406 9.5L16.6406 8L12.0703 12.5703L7.5 8Z"
-                        fill="#ffffff" />
-                </svg>
+            <div>
+                <div class="text-caption md:text-title flex items-center gap-1 p-1 rounded-md hover:bg-background hover:bg-opacity-50 hover:cursor-pointer" @click="toggelYear">
+                    <div>{{ year }}</div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M7.5 8L6 9.5L12.0703 15.5703L18.1406 9.5L16.6406 8L12.0703 12.5703L7.5 8Z"
+                            fill="#ffffff" />
+                    </svg>
+                </div>
+
+                <div v-if="expandYears" class="fixed bg-white rounded-md mt-1 z-50 shadow-lg">
+                    <div class="text-secondary text-caption md:text-title px-4 py-1 text-center hover:bg-background hover:bg-opacity-50 hover:cursor-pointer" v-for="item in years" :key="item" @click="selectYear(item)">{{ item }}</div>
+                </div>
             </div>
         </div>
 
@@ -24,7 +29,7 @@
             <div class="order-3 md:order-1 w-full h-[500px] md:w-[400px] md:h-[550px] relative">
                 <Calendar :month="item" :year="year" v-for="(item, index) in cards" :key="item"
                     :style="{ transform: `scale(${4 / (4 + (index * 0.1))}) translate(0px, ${index * 25}px)`, opacity: `${(4 - index) / 4}` }"
-                    class="w-full h-fu absolute ease-in-out duration-300" :class="{ 'z-50': index === 0 }"
+                    class="w-full h-fu absolute ease-in-out duration-300" :class="{ 'z-40': index === 0 }"
                     @selectedDate="getDate" />
 
             </div>
@@ -103,9 +108,11 @@ export default {
     data() {
         return {
             year: 2024,
+            years: [2024, 2025, 2026, 2027, 2028, 2029, 2030] as number[],
             cards: [] as number[],
             events: [] as event[],
             scrollBar: 0 as any,
+            expandYears: false as boolean,
             openModal: false as boolean,
             selectedDate: {} as date,
             currentMonth: (new Date().getMonth()) + 1,
@@ -181,6 +188,12 @@ export default {
         getDate(date: date) {
             this.openModal = true
             this.selectedDate = date
+        },
+        toggelYear(){
+            this.expandYears = !this.expandYears
+        },
+        selectYear(year: number){
+            this.year = year
         },
         createEvent(event: event) {
             event.id = Date.now()

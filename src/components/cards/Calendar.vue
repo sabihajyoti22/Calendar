@@ -10,7 +10,8 @@
       </div>
 
       <div class="text-center" v-for="day in startDay" :key="day" />
-      <div :class="{ 'bg-secondary text-white': new Date().getDate() === day && (new Date().getMonth() + 1) === month && new Date().getFullYear() === year }"
+      <div
+        :class="{ 'bg-secondary text-white': new Date().getDate() === day && (new Date().getMonth() + 1) === month && new Date().getFullYear() === year }"
         class="text-center my-2 hover:bg-pink hover:text-white hover:cursor-pointer py-[5px] md:py-[9px] rounded-full"
         v-for="day in   daysInMonths  " :key="day + '%'" @click="selectDate(day)">
         {{ day }}
@@ -66,10 +67,6 @@ export default {
       }
       this.$emit('selectedDate', this.selectedDate)
     }
-  },
-  mounted() {
-      console.log(new Date().getMonth())
-      console.log(this.month)
-  },
+  }
 }
 </script>

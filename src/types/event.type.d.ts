@@ -4,7 +4,7 @@ type event = {
   currentHour: number,
   currentMintue: number
   time: string,
-  year?: number
+  year: number
   month: number
-  day?: number
+  day: number
 }

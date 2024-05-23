@@ -16,7 +16,7 @@
               fill="#7A6FCB" />
           </svg>
         </button>
-        <div id="scrollbar" class="max-h-[108px] overflow-y-hidden hour">
+        <div id="scrollbar" class="max-h-[120px] overflow-y-hidden hour">
           <div v-for="hour in  hours " :key="hour"
             class="text-title1 text-secondary text-center ease-in-out duration-500 py-1"
             :style="{ transform: `scale(${hour == event.currentHour ? 1 : 0.7})`, opacity: `${hour == event.currentHour ? 1 : 0.5}` }">
@@ -41,7 +41,7 @@
                 fill="#7A6FCB" />
             </svg>
           </button>
-          <div id="scrollbar" class="max-h-[108px] overflow-y-hidden mintue">
+          <div id="scrollbar" class="max-h-[120px] overflow-y-hidden mintue">
             <div v-for="mintue in  mintues " :key="mintue"
               class="text-title1 text-secondary text-center ease-in-out duration-500 py-1"
               :style="{ transform: `scale(${mintue == event.currentMintue ? 1 : 0.7})`, opacity: `${mintue == event.currentMintue ? 1 : 0.5}` }">
@@ -74,7 +74,7 @@ export default {
   data() {
     return {
       hours: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] as number[],
-      mintues: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60,
+      mintues: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60,
       ] as number[],
       event: {
         title: '',
@@ -91,6 +91,10 @@ export default {
     selectedDate: {
       type: Object,
       default: {} as date
+    },
+    updatedValue: {
+      type: Object,
+      default: {} as event
     }
   },
   computed: {
@@ -102,10 +106,22 @@ export default {
     }
   },
   mounted() {
-    this.hourScroll = document.querySelector('.hour')
-    this.hourScroll.scrollTop = 330 / 2
-    this.mintueScroll = document.querySelector('.mintue')
-    this.mintueScroll.scrollTop = 2250 / 2
+    if (this.updatedValue.id) {
+      this.event = JSON.parse(JSON.stringify(this.updatedValue))
+      if (this.event.currentHour > 2) {
+        this.hourScroll = document.querySelector('.hour')
+        this.hourScroll.scrollTop = ((this.event.currentHour - 2) * 40)
+      }
+      if (this.event.currentMintue > 2) {
+        this.mintueScroll = document.querySelector('.mintue')
+        this.mintueScroll.scrollTop = ((this.event.currentMintue - 1) * 40)
+      }
+    } else {
+      this.hourScroll = document.querySelector('.hour')
+      this.hourScroll.scrollTop = 160
+      this.mintueScroll = document.querySelector('.mintue')
+      this.mintueScroll.scrollTop = 1160
+    }
   },
   methods: {
     increaseHour() {

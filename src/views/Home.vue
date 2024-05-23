@@ -3,7 +3,8 @@
         <div class="flex justify-between items-center text-white mb-5">
             <div class="text-title md:text-title1">Calendar</div>
             <div>
-                <div class="text-caption md:text-title flex items-center gap-1 p-1 rounded-md hover:bg-background hover:bg-opacity-50 hover:cursor-pointer" @click="toggelYear">
+                <div class="text-caption md:text-title flex items-center gap-1 p-1 rounded-md hover:bg-background hover:bg-opacity-50 hover:cursor-pointer"
+                    @click="toggelYear">
                     <div>{{ year }}</div>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                         <path d="M7.5 8L6 9.5L12.0703 15.5703L18.1406 9.5L16.6406 8L12.0703 12.5703L7.5 8Z"
@@ -12,7 +13,8 @@
                 </div>
 
                 <div v-if="expandYears" class="fixed bg-white rounded-md mt-1 z-50 shadow-lg">
-                    <div class="text-secondary text-caption md:text-title px-4 py-1 text-center hover:bg-background hover:bg-opacity-50 hover:cursor-pointer" v-for="item in years" :key="item" @click="selectYear(item)">{{ item }}</div>
+                    <div class="text-secondary text-caption md:text-title px-4 py-1 text-center hover:bg-background hover:bg-opacity-50 hover:cursor-pointer"
+                        v-for="item in years" :key="item" @click="selectYear(item)">{{ item }}</div>
                 </div>
             </div>
         </div>
@@ -72,28 +74,40 @@
                         <div class="text-caption md:text-body1 text-pink">{{ `${item.day} ${months[item.month - 1]}` }}
                         </div>
 
-                        <div>
-                            <button class="h-6 w-6 rounded-full grid place-content-center hover:bg-background group">
+                        <div class="flex gap-1">
+                            <button @click="editData(item)"
+                                class="h-6 w-6 rounded-full grid place-content-center hover:bg-background group">
                                 <svg class="fill-[#7A6FCB] group-hover:fill-white" xmlns="http://www.w3.org/2000/svg"
-                                    width="14" height="14" viewBox="0 0 14 14">
+                                    width="18" height="18" viewBox="0 0 24 24">
                                     <path
-                                        d="M11.1906 5.43884L11.8878 4.74169C12.6118 4.01769 12.6118 2.83941 11.8878 2.11512C11.5372 1.76484 11.0712 1.57227 10.5744 1.57227C10.0775 1.57227 9.61121 1.76512 9.26092 2.11541L8.56407 2.81227L11.1906 5.43884ZM7.95807 3.41827L2.79549 8.58084C2.68549 8.69084 2.60178 8.82655 2.55321 8.97369L1.59607 11.8654C1.54492 12.0191 1.58521 12.1886 1.69978 12.3031C1.78178 12.3848 1.89092 12.4286 2.00292 12.4286C2.04807 12.4286 2.09349 12.4214 2.13778 12.4068L5.02864 11.4494C5.17635 11.4008 5.31235 11.3171 5.42235 11.2068L10.5846 6.04455L7.95807 3.41827Z" />
+                                        d="M18.4141 2C18.1581 2 17.902 2.09797 17.707 2.29297L15.707 4.29297L14.293 5.70703L3 17V21H7L21.707 6.29297C22.098 5.90197 22.098 5.26891 21.707 4.87891L19.1211 2.29297C18.9261 2.09797 18.6701 2 18.4141 2ZM18.4141 4.41406L19.5859 5.58594L18.293 6.87891L17.1211 5.70703L18.4141 4.41406ZM15.707 7.12109L16.8789 8.29297L6.17188 19H5V17.8281L15.707 7.12109Z" />
+                                </svg>
+                            </button>
+
+                            <button @click="deleteEvent(item.id)"
+                                class="h-6 w-6 rounded-full grid place-content-center hover:bg-pink hover:bg-opacity-50 group">
+                                <svg class="fill-[#F44D84] group-hover:fill-white" xmlns="http://www.w3.org/2000/svg"
+                                    width="18" height="18" viewBox="0 0 24 24">
+                                    <path
+                                        d="M16 9V19H8V9H16ZM14.5 3H9.5L8.5 4H5V6H19V4H15.5L14.5 3ZM18 7H6V19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V7Z" />
                                 </svg>
                             </button>
                         </div>
                     </div>
                     <div class="text-title md:text-title0 line-clamp-1">{{ item.title }}</div>
-                    <div class="text-gray-400 text-body1 md:text-title">{{ `${item.currentHour} : ${item.currentMintue}
-                        ${item.time}` }}</div>
+                    <div class="text-gray-400 text-body1 md:text-title">{{ `${item.currentHour < 10 ? '0' +
+                        item.currentHour : item.currentHour} : ${item.currentMintue < 10 ? '0' + item.currentMintue :
+                            item.currentMintue} ${item.time}` }}</div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Modal -->
-        <div v-if="openModal" class="overlay">
-            <CreateEvent :selected-date="selectedDate" @send-data="createEvent" @close="closeModal" />
+            <!-- Modal -->
+            <div v-if="openModal" class="overlay">
+                <CreateEvent :selected-date="selectedDate" :updatedValue="updatedValue" @send-data="getData"
+                    @close="closeModal" />
+            </div>
         </div>
-    </div>
 </template>
 
 <script lang="ts">
@@ -119,7 +133,7 @@ export default {
             months: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
             db: null as any,
             objectStore: null as any,
-            transaction: null as any
+            updatedValue: {} as event
         }
     },
     mounted() {
@@ -144,8 +158,8 @@ export default {
 
             request.onupgradeneeded = (evt: any) => {
                 this.db = evt.target.result
-                this.objectStore = this.db.createObjectStore("events", { keyPath: "id" })
-                this.objectStore.createIndex("id", "id", { unique: true })
+                const objectStore = this.db.createObjectStore("events", { keyPath: "id" })
+                objectStore.createIndex("id", "id", { unique: true })
             }
         },
         getAllEvents() {
@@ -157,7 +171,6 @@ export default {
 
             request.onsuccess = () => {
                 this.events = JSON.parse(JSON.stringify(request.result))
-                console.table(request.result)
             }
         },
         previous() {
@@ -189,29 +202,57 @@ export default {
             this.openModal = true
             this.selectedDate = date
         },
-        toggelYear(){
+        toggelYear() {
             this.expandYears = !this.expandYears
         },
-        selectYear(year: number){
+        selectYear(year: number) {
             this.year = year
+        },
+        editData(event: event) {
+            this.updatedValue = event
+
+            const { id, title, currentHour, currentMintue, time, ...rest } = this.updatedValue
+            this.selectedDate = rest
+
+            this.openModal = true
+        },
+        getData(event: event) {
+            this.objectStore = this.db
+                .transaction(["events"], "readwrite")
+                .objectStore("events")
+            if (event.id) {
+                this.updateEvent(event)
+            } else {
+                this.createEvent(event)
+            }
         },
         createEvent(event: event) {
             event.id = Date.now()
-            this.events.push(event)
+            const request = this.objectStore.add(JSON.parse(JSON.stringify(event)))
 
-            this.transaction = this.db.transaction(["events"], "readwrite")
-
-            this.transaction.onerror = (event: any) => {
-                console.log("A error has occured during transaction")
-            }
-
-            this.objectStore = this.transaction.objectStore("events")
-            const request = this.objectStore.add(JSON.parse(JSON.stringify(event)));
-            request.onsuccess = (evt: any) => {
-                // console.log(evt.target.result)
+            request.onsuccess = () => {
+                this.getAllEvents()
             }
 
             this.closeModal()
+        },
+        updateEvent(event: event) {
+            const request = this.objectStore.put(JSON.parse(JSON.stringify(event)))
+
+            request.onsuccess = () => {
+                this.getAllEvents()
+            }
+
+            this.closeModal()
+        },
+        deleteEvent(id: number) {
+            const request = this.db
+                .transaction(["events"], "readwrite")
+                .objectStore("events")
+                .delete(id)
+            request.onsuccess = () => {
+                this.getAllEvents()
+            }
         },
         closeModal() {
             this.openModal = false

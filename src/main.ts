@@ -5,12 +5,11 @@ import router from "./router"
 import apiCallsPlugin from './plugin/apiCalls.ts'
 
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/worker/serviceWorker.js')
-    .then((registrations: any) => {
+  navigator.serviceWorker.register('/serviceWorker.js')
+    .then(() => {
       console.log("Service worker is registered")
     })
     .catch((err) => {
-      console.log(err)
       console.log("Service worker is not registered")
     })
 } else {

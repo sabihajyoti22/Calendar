@@ -96,8 +96,8 @@
                     </div>
                     <div class="text-title md:text-title0 line-clamp-1">{{ item.title }}</div>
                     <div class="text-gray-400 text-body1 md:text-title">{{ `${item.currentHour < 10 ? '0' +
-                        item.currentHour : item.currentHour} : ${item.currentMintue < 10 ? '0' + item.currentMintue :
-                            item.currentMintue} ${item.time}` }}</div>
+                        item.currentHour : item.currentHour} : ${item.currentMintue < 10 ? '0' + item.currentMintue
+                            : item.currentMintue} ${item.time}` }}</div>
                     </div>
                 </div>
             </div>
@@ -120,6 +120,7 @@ export default {
         CreateEvent
     },
     data() {
+        function opt<T>() { return undefined as T | undefined }
         return {
             year: 2024,
             years: [2024, 2025, 2026, 2027, 2028, 2029, 2030] as number[],
@@ -133,7 +134,7 @@ export default {
             months: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
             db: null as any,
             objectStore: null as any,
-            updatedValue: {} as event
+            updatedValue: opt<event>()
         }
     },
     mounted() {
@@ -201,6 +202,7 @@ export default {
         getDate(date: date) {
             this.openModal = true
             this.selectedDate = date
+            this.updatedValue = undefined
         },
         toggelYear() {
             this.expandYears = !this.expandYears

@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "type-check": "vue-tsc",
+    "eslint": "eslint --fix"
   },
   "dependencies": {
     "axios": "^1.6.8",

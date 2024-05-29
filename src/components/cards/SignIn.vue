@@ -1,16 +1,16 @@
 <template>
   <form @submit.prevent="logIn" class="w-full h-full p-3 md:p-5">
-    <div class="text-center text-title1 md:text-title2 text-secondary py-3 md:py-5">
+    <div class="text-center text-title1 md:text-title2 text-secondary1 py-3 md:py-5">
       Log In to Your Account
     </div>
 
     <input v-model="user.email" type="text"
-      class="w-full p-3 text-title md:text-title0 text-secondary placeholder:text-secondary placeholder:opacity-50 placeholder:text-title0 appearance-none outline-none border-b border-secondary mb-5"
+      class="w-full p-3 text-title md:text-title0 text-secondary1 placeholder:text-secondary1 placeholder:opacity-50 placeholder:text-title0 appearance-none outline-none border-b border-secondary1 mb-5"
       placeholder="Enter your email">
 
     <div class="relative">
       <input v-model="user.password" :type="showPass ? 'text' : 'password'"
-        class="w-full p-3 text-title md:text-title0 text-secondary placeholder:text-secondary placeholder:opacity-50 placeholder:text-title0 appearance-none outline-none border-b border-secondary mb-40"
+        class="w-full p-3 text-title md:text-title0 text-secondary1 placeholder:text-secondary1 placeholder:opacity-50 placeholder:text-title0 appearance-none outline-none border-b border-secondary1 mb-40"
         placeholder="Enter your password">
 
       <div class="absolute top-4 right-0">
@@ -33,11 +33,11 @@
     </div>
 
     <button type="submit" :disabled="!user.email || !user.password"
-      class=" w-full py-2 bg-primary text-title text-white rounded-md mb-2 disabled:bg-primary/55">
+      class=" w-full py-2 bg-primary1 text-title text-white rounded-md mb-2 disabled:bg-primary1/55">
       Log in
     </button>
 
-    <div class="text-center text-title0 text-secondary mb-3">
+    <div class="text-center text-title0 text-secondary1 mb-3">
       Don't have an account?
     </div>
 

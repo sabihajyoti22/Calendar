@@ -1,6 +1,6 @@
 <template>
-  <div class="w-full min-h-screen bg-background flex justify-center">
-    <div class="w-full min-h-full md:w-[1000px] mx-5 p-6 bg-primary">
+  <div class="w-full min-h-screen bg-background1 flex justify-center">
+    <div class="w-full min-h-full md:w-[1000px] mx-5 p-6 bg-primary1">
       <Navbar />
       <router-view />
     </div>
@@ -8,11 +8,11 @@
 </template>
 
 <script lang="ts">
-  import Navbar from "../src/components/Navbar.vue"
+import Navbar from "../src/components/Navbar.vue"
 
-  export default {
-    components: {
-      Navbar
-    }
+export default {
+  components: {
+    Navbar
   }
+}
 </script>

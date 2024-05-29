@@ -49,7 +49,7 @@
 
 @layer components {
   .overlay {
-    @apply fixed inset-0 bg-secondary bg-opacity-60 z-50 w-full h-full flex justify-center items-center
+    @apply fixed inset-0 bg-secondary1 bg-opacity-60 z-50 w-full h-full flex justify-center items-center
   }
 }
 

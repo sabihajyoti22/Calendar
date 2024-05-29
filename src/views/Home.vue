@@ -3,7 +3,7 @@
         <div class="flex justify-between items-center text-white mb-5">
             <div class="text-title md:text-title1">Calendar</div>
             <div>
-                <div class="text-caption md:text-title flex items-center gap-1 p-1 rounded-md hover:bg-background hover:bg-opacity-50 hover:cursor-pointer"
+                <div class="text-caption md:text-title flex items-center gap-1 p-1 rounded-md hover:bg-background1 hover:bg-opacity-50 hover:cursor-pointer"
                     @click="toggelYear">
                     <div>{{ year }}</div>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -13,7 +13,7 @@
                 </div>
 
                 <div v-if="expandYears" class="fixed bg-white rounded-md mt-1 z-50 shadow-lg">
-                    <div class="text-secondary text-caption md:text-title px-4 py-1 text-center hover:bg-background hover:bg-opacity-50 hover:cursor-pointer"
+                    <div class="text-secondary1 text-caption md:text-title px-4 py-1 text-center hover:bg-background1 hover:bg-opacity-50 hover:cursor-pointer"
                         v-for="item in years" :key="item" @click="selectYear(item)">{{ item }}</div>
                 </div>
             </div>
@@ -21,7 +21,7 @@
 
         <div class="flex justify-between md:justify-evenly items-center flex-wrap mb-20 md:mb-24">
             <button @click="previous"
-                class="w-10 h-10 grid place-content-center rounded-full border border-background hover:bg-background order-1 md:order-1 mb-3 md:mb-0">
+                class="w-10 h-10 grid place-content-center rounded-full border border-background1 hover:bg-background1 order-1 md:order-1 mb-3 md:mb-0">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                     <path d="M14.0703 6L8 12.0703L14.0703 18.1406L15.5703 16.6406L11 12.0703L15.5703 7.5L14.0703 6Z"
                         fill="#ffffff" />
@@ -37,7 +37,7 @@
             </div>
 
             <button @click="next"
-                class="w-10 h-10 grid place-content-center rounded-full border border-background hover:bg-background order-2 md:order-1 mb-3 md:mb-0">
+                class="w-10 h-10 grid place-content-center rounded-full border border-background1 hover:bg-background1 order-2 md:order-1 mb-3 md:mb-0">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                     <path d="M9.5 6L8 7.5L12.5703 12.0703L8 16.6406L9.5 18.1406L15.5703 12.0703L9.5 6Z"
                         fill="#ffffff" />
@@ -50,7 +50,7 @@
                 <div class="text-title md:text-title0 text-white">Upcoming Events</div>
                 <div class="flex gap-2">
                     <button @click="scrollPrevious"
-                        class="w-8 h-8 grid place-content-center rounded-full border border-background hover:bg-background">
+                        class="w-8 h-8 grid place-content-center rounded-full border border-background1 hover:bg-background1">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                             <path
                                 d="M14.0703 6L8 12.0703L14.0703 18.1406L15.5703 16.6406L11 12.0703L15.5703 7.5L14.0703 6Z"
@@ -58,7 +58,7 @@
                         </svg>
                     </button>
                     <button @click="scrollNext"
-                        class="w-8 h-8 grid place-content-center rounded-full border border-background hover:bg-background mb-3 md:mb-0">
+                        class="w-8 h-8 grid place-content-center rounded-full border border-background1 hover:bg-background1 mb-3 md:mb-0">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                             <path d="M9.5 6L8 7.5L12.5703 12.0703L8 16.6406L9.5 18.1406L15.5703 12.0703L9.5 6Z"
                                 fill="#ffffff" />
@@ -76,7 +76,7 @@
 
                         <div class="flex gap-1">
                             <button @click="editData(item)"
-                                class="h-6 w-6 rounded-full grid place-content-center hover:bg-background group">
+                                class="h-6 w-6 rounded-full grid place-content-center hover:bg-background1 group">
                                 <svg class="fill-[#7A6FCB] group-hover:fill-white" xmlns="http://www.w3.org/2000/svg"
                                     width="18" height="18" viewBox="0 0 24 24">
                                     <path

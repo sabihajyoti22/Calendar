@@ -1,11 +1,11 @@
 <template>
   <div class="w-[450px] mx-3 bg-white p-3 md:p-5 rounded-md">
-    <div class="text-secondary text-title tracking-tight">
+    <div class="text-secondary1 text-title tracking-tight">
       {{ selectedWeek }}, {{ selectedMonth }} {{ selectedDate.day }}
     </div>
 
     <input type="text" v-model="event.title"
-      class="w-full p-3 text-title md:text-title0 text-secondary placeholder:text-secondary placeholder:opacity-50 placeholder:text-title0 appearance-none outline-none"
+      class="w-full p-3 text-title md:text-title0 text-secondary1 placeholder:text-secondary1 placeholder:opacity-50 placeholder:text-title0 appearance-none outline-none"
       placeholder="Add title">
 
     <div class="flex justify-center items-center gap-3 mb-3">
@@ -18,7 +18,7 @@
         </button>
         <div id="scrollbar" class="max-h-[120px] overflow-y-hidden hour">
           <div v-for="hour in  hours " :key="hour"
-            class="text-title1 text-secondary text-center ease-in-out duration-500 py-1"
+            class="text-title1 text-secondary1 text-center ease-in-out duration-500 py-1"
             :style="{ transform: `scale(${hour == event.currentHour ? 1 : 0.7})`, opacity: `${hour == event.currentHour ? 1 : 0.5}` }">
             {{ hour < 10 ? '0' + hour : hour }} </div>
           </div>
@@ -30,7 +30,7 @@
           </button>
         </div>
 
-        <div class="text-title1 text-secondary">
+        <div class="text-title1 text-secondary1">
           :
         </div>
 
@@ -43,7 +43,7 @@
           </button>
           <div id="scrollbar" class="max-h-[120px] overflow-y-hidden mintue">
             <div v-for="mintue in  mintues " :key="mintue"
-              class="text-title1 text-secondary text-center ease-in-out duration-500 py-1"
+              class="text-title1 text-secondary1 text-center ease-in-out duration-500 py-1"
               :style="{ transform: `scale(${mintue == event.currentMintue ? 1 : 0.7})`, opacity: `${mintue == event.currentMintue ? 1 : 0.5}` }">
               {{ mintue < 10 ? '0' + mintue : mintue }} </div>
             </div>
@@ -55,7 +55,7 @@
             </button>
           </div>
 
-          <div class="text-title0 text-secondary flex flex-col">
+          <div class="text-title0 text-secondary1 flex flex-col">
             <button @click="event.time = 'AM'" class="ease-in-out duration-300"
               :class="event.time === 'AM' ? 'opacity-100 scale-100' : 'opacity-50 scale-75'">AM</button>
             <button @click="event.time = 'PM'" class="ease-in-out duration-300"
@@ -64,7 +64,7 @@
         </div>
 
         <button :disabled="!event.title" @click="saveButton"
-          class=" w-full py-1 bg-primary text-title text-white rounded-md mb-2 disabled:bg-primary/55">Save</button>
+          class=" w-full py-1 bg-primary1 text-title text-white rounded-md mb-2 disabled:bg-primary1/55">Save</button>
         <button @click="closeButton" class="w-full py-1 bg-pink text-title text-white rounded-md">Close</button>
       </div>
 </template>

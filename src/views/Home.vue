@@ -48,7 +48,7 @@
         <div v-if="events.length" class="md:ml-12 mb-3 md:mb-6">
             <div class="hidden md:flex justify-between items-center mb-3 md:mb-5">
                 <div class="text-title md:text-title0 text-white">Upcoming Events</div>
-                <div class="flex gap-2">
+                <div v-if="events.length > 4" class="flex gap-2">
                     <button @click="scrollPrevious"
                         class="w-8 h-8 grid place-content-center rounded-full border border-background1 hover:bg-background1">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -138,11 +138,12 @@ export default {
         }
     },
     mounted() {
-        this.scrollBar = document.getElementById('scrollbar')
         this.cards = Array.from(Array(4), () => {
-            return this.currentMonth++;
+            return this.currentMonth++
         })
         this.initiateIndexedDB()
+        this.getEventNotification()
+
     },
     methods: {
         initiateIndexedDB() {
@@ -189,6 +190,7 @@ export default {
             }
         },
         scrollNext() {
+            this.scrollBar = document.getElementById('scrollbar')
             this.scrollBar.scrollLeft += 212
             if (this.scrollBar.scrollLeft + this.scrollBar.clientWidth >= this.scrollBar.scrollBar) {
                 this.scrollBar.scrollLeft = 0;
@@ -258,6 +260,32 @@ export default {
         },
         closeModal() {
             this.openModal = false
+        },
+        notifications(title: string, msg: string, icon: string, song: string) {
+            new Notification(title, {
+                icon: icon,
+                body: msg
+            })
+            console.log(new Audio(song))
+            // new Audio(song).play()
+        },
+        getEventNotification() {
+            const title: string = 'Calendar App'
+            const msg: string = "Event's notification"
+            const icon: string = '/images/calendarLogo.jpg'
+            const song: string = '/notifySound.mp3'
+
+            if (!("Notification" in window)) {
+                alert("This browser does not support desktop notification");
+            } else if (Notification.permission === "granted") {
+                this.notifications(title, msg, icon, song)
+            } else if (Notification.permission !== "denied") {
+                Notification.requestPermission().then((permission) => {
+                    if (permission === "granted") {
+                        this.notifications(title, msg, icon, song)
+                    }
+                })
+            }
         }
     }
 }

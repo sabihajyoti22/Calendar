@@ -33,6 +33,16 @@ self.addEventListener('activate', evt => {
   )
 })
 
+const limitCacheSize = (name, size) => {
+  caches.open(name).then(cache => {
+    cache.keys().then(keys => {
+      if (keys.length > size) {
+        cache.delete(keys[0]).then(limitCacheSize(name, size))
+      }
+    })
+  })
+}
+
 self.addEventListener("fetch", (evt) => {
   evt.respondWith(
     caches.match(evt.request).then(cacheRes => {
@@ -40,10 +50,15 @@ self.addEventListener("fetch", (evt) => {
         .then(fetchRes => {
           return caches.open(dynamicCacheName).then(cache => {
             cache.put(evt.request.url, fetchRes.clone())
+            // limitCacheSize(dynamicCacheName, 20)
             return fetchRes
           })
         })
-        .catch(() => caches.match(offlineURL))
+        .catch((err) => {
+          if (evt.request.url.indexof('.vue') >= 0) {
+            return caches.match(offlineURL)
+          }
+        })
     })
   )
 })

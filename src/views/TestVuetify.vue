@@ -8,7 +8,7 @@
 </template>
 
 <script lang="ts">
-import { VSelect } from 'vuetify/lib/components/index.mjs';
+import { VSelect } from 'vuetify/lib/components/index.mjs'
 export default {
   components: {
     VSelect,

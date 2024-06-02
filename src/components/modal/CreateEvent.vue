@@ -10,7 +10,7 @@
 
     <div class="flex justify-center items-center gap-3 mb-3">
       <div class="grid place-content-center">
-        <button @click="decreaseHour" class="rotate-90">
+        <button @click="decreaseHour" class="rotate-90" :disabled="event.currentHour === 1">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path d="M14.0703 6L8 12.0703L14.0703 18.1406L15.5703 16.6406L11 12.0703L15.5703 7.5L14.0703 6Z"
               fill="#7A6FCB" />
@@ -22,7 +22,7 @@
             :style="{ transform: `scale(${hour == event.currentHour ? 1 : 0.7})`, opacity: `${hour == event.currentHour ? 1 : 0.5}` }">
             {{ hour < 10 ? '0' + hour : hour }} </div>
           </div>
-          <button @click="increaseHour" class="-rotate-90">
+          <button @click="increaseHour" class="-rotate-90" :disabled="event.currentHour === 12">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
               <path d="M14.0703 6L8 12.0703L14.0703 18.1406L15.5703 16.6406L11 12.0703L15.5703 7.5L14.0703 6Z"
                 fill="#7A6FCB" />
@@ -35,7 +35,7 @@
         </div>
 
         <div class="grid place-content-center">
-          <button @click="decreaseMintue" class="rotate-90">
+          <button @click="decreaseMintue" class="rotate-90" :disabled="event.currentMintue === 60">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
               <path d="M14.0703 6L8 12.0703L14.0703 18.1406L15.5703 16.6406L11 12.0703L15.5703 7.5L14.0703 6Z"
                 fill="#7A6FCB" />
@@ -47,7 +47,7 @@
               :style="{ transform: `scale(${mintue == event.currentMintue ? 1 : 0.7})`, opacity: `${mintue == event.currentMintue ? 1 : 0.5}` }">
               {{ mintue < 10 ? '0' + mintue : mintue }} </div>
             </div>
-            <button @click="increaseMintue" class="-rotate-90">
+            <button @click="increaseMintue" class="-rotate-90" :disabled="event.currentMintue === 0">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <path d="M14.0703 6L8 12.0703L14.0703 18.1406L15.5703 16.6406L11 12.0703L15.5703 7.5L14.0703 6Z"
                   fill="#7A6FCB" />

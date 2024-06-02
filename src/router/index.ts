@@ -15,6 +15,11 @@ const routes = [
     path: '/testVuetify',
     name: 'testVuetify',
     component: () => import('../views/TestVuetify.vue'),
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'errorPage',
+    component: () => import('../views/404.vue'),
   }
 ]
 

@@ -3,7 +3,7 @@ import App from './App.vue'
 import router from "./router"
 import apiCallsPlugin from './plugin/apiCalls.ts'
 import { createVuetify } from 'vuetify'
-import 'vuetify/styles'
+// import 'vuetify/styles'
 import './style.css'
 
 if ('serviceWorker' in navigator) {

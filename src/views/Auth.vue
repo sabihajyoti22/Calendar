@@ -86,7 +86,7 @@ export default {
     }
   },
   mounted() {
-    this.getRefreshToken()
+    // this.getRefreshToken()
   },
   methods: {
     getRefreshToken() {

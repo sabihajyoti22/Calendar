@@ -45,6 +45,10 @@
   .text-title4 {
     @apply font-lilto text-5xl leading-snug tracking-wider
   }
+
+  .text-title8 {
+    @apply font-lilto text-9xl leading-snug tracking-wider
+  }
 }
 
 @layer components {

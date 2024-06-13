@@ -102,7 +102,6 @@
                 </div>
             </div>
 
-            <!-- Modal -->
             <div v-if="openModal" class="overlay">
                 <CreateEvent :selected-date="selectedDate" :updatedValue="updatedValue" @send-data="getData"
                     @close="closeModal" />
@@ -143,7 +142,6 @@ export default {
         })
         this.initiateIndexedDB()
         this.getEventNotification()
-
     },
     methods: {
         initiateIndexedDB() {
@@ -266,7 +264,7 @@ export default {
                 icon: icon,
                 body: msg
             })
-            console.log(new Audio(song))
+
             // new Audio(song).play()
         },
         getEventNotification() {

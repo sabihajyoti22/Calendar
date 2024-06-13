@@ -8,6 +8,34 @@ const assets = [
   '/src/views/Offline.vue'
 ]
 
+let db = null
+let events = []
+
+const initiateIndexedDB = () => {
+  const request = indexedDB.open("Calendar", 1)
+
+  request.onerror = (err) => {
+    console.error(`Database error: ${err.target.errorCode}`);
+  }
+
+  request.onsuccess = (evt) => {
+    db = evt.target.result
+    getAllEvents()
+  }
+}
+
+const getAllEvents = () => {
+  const request = db.transaction('events').objectStore('events').getAll();
+
+  request.onerror = (err) => {
+    console.error(`Error to get all events: ${err}`)
+  }
+
+  request.onsuccess = () => {
+    events = JSON.parse(JSON.stringify(request.result))
+  }
+}
+
 self.addEventListener('install', evt => {
   console.log("Service worker installed")
   evt.waitUntil(
@@ -15,7 +43,8 @@ self.addEventListener('install', evt => {
       cache.addAll(assets)
     }).catch(err => {
       console.log(err)
-    })
+    }),
+    initiateIndexedDB()
   )
 })
 
@@ -50,7 +79,6 @@ self.addEventListener("fetch", (evt) => {
         .then(fetchRes => {
           return caches.open(dynamicCacheName).then(cache => {
             cache.put(evt.request.url, fetchRes.clone())
-            // limitCacheSize(dynamicCacheName, 20)
             return fetchRes
           })
         })

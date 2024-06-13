@@ -10,6 +10,7 @@ const assets = [
 
 let db = null
 let events = []
+let currentDate = null
 
 const initiateIndexedDB = () => {
   const request = indexedDB.open("Calendar", 1)
@@ -33,7 +34,18 @@ const getAllEvents = () => {
 
   request.onsuccess = () => {
     events = JSON.parse(JSON.stringify(request.result))
+    const today = new Date()
+    currentDate = events.filter((el) => el.day === today.getDate() && (today.getMonth() + 1) === el.month && today.getFullYear() === el.year)
+
+    if (currentDate.length) {
+      sendNotification()
+    }
   }
+}
+
+const sendNotification = () => {
+  // currentDate = new Date()
+
 }
 
 self.addEventListener('install', evt => {
@@ -73,6 +85,7 @@ const limitCacheSize = (name, size) => {
 }
 
 self.addEventListener("fetch", (evt) => {
+  console.log(currentDate)
   evt.respondWith(
     caches.match(evt.request).then(cacheRes => {
       return cacheRes || fetch(evt.request)

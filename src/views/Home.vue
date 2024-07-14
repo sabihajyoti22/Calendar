@@ -154,9 +154,11 @@ export default {
             request.onsuccess = (evt: any) => {
                 this.db = evt.target.result
                 this.getAllEvents()
+                console.log('Success')
             }
 
             request.onupgradeneeded = (evt: any) => {
+                console.log('Upgrade')
                 this.db = evt.target.result
                 const objectStore = this.db.createObjectStore("events", { keyPath: "id" })
                 objectStore.createIndex("id", "id", { unique: true })

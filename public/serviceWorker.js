@@ -10,56 +10,66 @@ const assets = [
 
 let db = null
 let events = []
-let currentDate = null
+let currentEvent = null
+let today = null
 
-// const initiateIndexedDB = () => {
-//   const request = indexedDB.open("Calendar", 1)
+const initiateIndexedDB = () => {
+  const request = indexedDB.open("Calendar", 1)
 
-//   request.onerror = (err) => {
-//     console.error(`Database error: ${err.target.errorCode}`);
-//   }
+  request.onerror = (err) => {
+    console.error(`Database error: ${err.target.errorCode}`);
+  }
 
-//   request.onsuccess = (evt) => {
-//     db = evt.target.result
-//     if(db.transaction('events')){
-//       getAllEvents()
-//     }
-//   }
-// }
+  request.onsuccess = (evt) => {
+    db = evt.target.result
+    if(db.objectStoreNames.length){
+      getAllEvents()
+    }
+  }
+}
 
-// const getAllEvents = () => {
-//   const request = db.transaction('events').objectStore('events').getAll();
+const getAllEvents = () => {
+  const request = db.transaction('events').objectStore('events').getAll();
 
-//   request.onerror = (err) => {
-//     console.error(`Error to get all events: ${err}`)
-//   }
+  request.onerror = (err) => {
+    console.error(`Error to get all events: ${err}`)
+  }
 
-//   request.onsuccess = () => {
-//     events = JSON.parse(JSON.stringify(request.result))
-//     const today = new Date()
-//     currentDate = events.filter((el) => el.day === today.getDate() && (today.getMonth() + 1) === el.month && today.getFullYear() === el.year)
+  request.onsuccess = () => {
+    events = JSON.parse(JSON.stringify(request.result))
+    console.log(events)
+    today = new Date()
+    currentEvent = events.filter((el) => el.day === today.getDate() && (today.getMonth() + 1) === el.month && today.getFullYear() === el.year)
 
-//     if (currentDate.length) {
-//       sendNotification()
-//     }
-//   }
-// }
+    if(currentEvent.length){
+      if(((currentEvent[0].time === 'PM' && currentEvent[0].currentHour + 12 === new Date().getHours()) || currentEvent[0].currentHour === new Date().getHours()) && currentEvent[0].currentMintue === new Date().getMinutes()){
+        sendNotification()
+      }
+    }
+    setTimeout(() => {
+      getAllEvents()
+    }, 60000)
+  }
+}
 
-// const sendNotification = () => {
-//   console.log(currentDate)
-//   setTimeout(() => {
-//     sendNotification()
-//   }, 10000)
-// }
+const sendNotification = () => {
+  const title = 'Calendar App'
+  const options = {
+    body: `${currentEvent[0].title} is on ${currentEvent[0].currentHour} : ${currentEvent[0].currentMintue} ${currentEvent[0].time}`,
+    icon: "./images/calendarLogo.jpg"
+  }
+  self.registration.showNotification(title, options)
+}
 
 self.addEventListener('install', evt => {
   console.log("Service worker installed")
   evt.waitUntil(
     caches.open(staticCacheName).then(cache => {
-      cache.addAll(assets)
-    }).catch(err => {
-      console.log(err)
-    })
+       cache.addAll(assets)
+     }).catch(err => {
+       console.log(err)
+     }),
+    initiateIndexedDB()
   )
 })
 
@@ -97,7 +107,7 @@ self.addEventListener("fetch", (evt) => {
             return fetchRes
           })
         })
-        .catch((err) => {
+        .catch(() => {
           if (evt.request.url.indexof('.vue') >= 0) {
             return caches.match(offlineURL)
           }

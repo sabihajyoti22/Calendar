@@ -141,7 +141,7 @@ export default {
             return this.currentMonth++
         })
         this.initiateIndexedDB()
-        this.getEventNotification()
+        // this.getEventNotification()
     },
     methods: {
         initiateIndexedDB() {
@@ -152,9 +152,9 @@ export default {
             }
 
             request.onsuccess = (evt: any) => {
+                console.log('Success')
                 this.db = evt.target.result
                 this.getAllEvents()
-                console.log('Success')
             }
 
             request.onupgradeneeded = (evt: any) => {

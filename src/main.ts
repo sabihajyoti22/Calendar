@@ -11,8 +11,8 @@ if ('serviceWorker' in navigator) {
     .then(() => {
       console.log("Service worker is registered")
     })
-    .catch((err) => {
-      console.log("Service worker is not registered")
+    .catch(() => {
+      console.log("Service worker is not registered") 
     })
 } else {
   console.log("Your browser doesn't support service worker")

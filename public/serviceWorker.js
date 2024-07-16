@@ -74,9 +74,8 @@ const checkEvents = () => {
         })
       }
     }
-    interval = setTimeout(() => {
+    setTimeout(() => {
       checkEvents()
-      clearInterval(interval)
     }, 50000)
   }
 }

@@ -121,7 +121,6 @@ export default {
     data() {
         function opt<T>() { return undefined as T | undefined }
         return {
-            permission: '' as string,
             year: 2024,
             years: [2024, 2025, 2026, 2027, 2028, 2029, 2030] as number[],
             cards: [] as number[],
@@ -142,9 +141,7 @@ export default {
             alert("Your browser doesn't support push notification")
         }else{
             Notification.requestPermission().then(res => {
-                if(res === 'granted'){
-                    this.permission = res
-                }else{
+                if(res !== 'granted'){
                     alert("You won't get any notification")
                 }
             })
@@ -159,7 +156,7 @@ export default {
             if(event.data.toDo === 'getAllEvents'){
                 this.events = JSON.parse(JSON.stringify(event.data.data))
             }
-            else if(event.data.toDo === 'sendNotification' && this.permission){
+            else if(event.data.toDo === 'sendNotification' && Notification.permission === 'granted'){
                 this.notify(JSON.parse(JSON.stringify(event.data.data)))
                 this.deleteEvent(JSON.parse(JSON.stringify(event.data.data.id)))
             }
@@ -237,6 +234,7 @@ export default {
             this.openModal = false
         },
         notify(currentEvent: event) {
+            console.log("Notified")
             const title: string = 'Notify Calendar'
             const msg: string = `${currentEvent.title} is on ${currentEvent.currentHour} : ${currentEvent.currentMintue < 10 ? '0' + currentEvent.currentMintue : currentEvent.currentMintue} ${currentEvent.time}`
             const icon: string = '/images/calendarLogo.jpg'
@@ -245,7 +243,8 @@ export default {
             navigator.serviceWorker.getRegistrations().then(function(registrations) {
                 registrations[0].showNotification(title, {
                     icon: icon,
-                    body: msg
+                    body: msg,
+                    tag: 'calendar'
                 })
             })
         }

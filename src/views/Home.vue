@@ -234,16 +234,16 @@ export default {
             this.openModal = false
         },
         notifications(title: string, msg: string, icon: string, song: string) {
-            // navigator.serviceWorker.getRegistrations().then(function(registrations) {
-            //     registrations[0].showNotification(title, {
-            //         icon: icon,
-            //         body: msg
-            //     })
-            // })
-            new Notification(title, {
-                icon: icon,
-                body: msg
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                registrations[0].showNotification(title, {
+                    icon: icon,
+                    body: msg
+                })
             })
+            // new Notification(title, {
+            //     icon: icon,
+            //     body: msg
+            // })
         },
         getEventNotification(currentEvent: event) {
             const title: string = 'Notify Calendar'

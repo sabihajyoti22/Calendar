@@ -236,7 +236,7 @@ export default {
         notifications(title: string, msg: string, icon: string, song: string) {
             navigator.serviceWorker.getRegistrations().then(function(registrations) {
                 registrations[0].showNotification(title, {
-                    icon: icon,
+                    // icon: icon,
                     body: msg
                 })
             })

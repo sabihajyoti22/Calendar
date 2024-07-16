@@ -1,6 +1,6 @@
 {
   "name": "Notify Calendar",
-  "short_name": "tifydar",
+  "short_name": "Notify Calendar",
   "start_url": "../index.html",
   "display": "standalone",
   "background_color": "#ffffff",

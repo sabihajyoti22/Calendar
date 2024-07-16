@@ -1,6 +1,6 @@
 <template>
   <div class="w-full py-6 text-white text-title1">
-    Navbar
+    Navbar 1
   </div>
 </template>
 

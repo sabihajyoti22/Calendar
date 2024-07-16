@@ -231,10 +231,6 @@ export default {
                     body: msg
                 })
             })
-            // new Notification(title, {
-            //     icon: icon,
-            //     body: msg
-            // })
         },
         getEventNotification(currentEvent: event) {
             const title: string = 'Notify Calendar'

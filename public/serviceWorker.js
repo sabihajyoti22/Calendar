@@ -59,6 +59,10 @@ const sendNotification = () => {
     icon: "./images/calendarLogo.jpg"
   }
   self.registration.showNotification(title, options)
+
+  db.transaction(["events"], "readwrite")
+  .objectStore("events")
+  .delete(currentEvent[0].id)
 }
 
 self.addEventListener('install', evt => {

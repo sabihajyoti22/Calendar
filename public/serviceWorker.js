@@ -38,7 +38,7 @@ const initiateIndexedDB = () => {
 }
 
 const getAllEvents = () => {
-  const request = db.transaction(["events"], window.webkitIDBTransaction.READ_WRITE).objectStore('events').getAll();
+  const request = db.transaction(["events"], window.IDBTransaction.READ_WRITE).objectStore('events').getAll();
 
   request.onerror = (err) => {
     console.error(`Error to get all events: ${err}`)
@@ -54,7 +54,7 @@ const getAllEvents = () => {
 }
 
 const checkEvents = () => {
-  const request = db.transaction(["events"], window.webkitIDBTransaction.READ_WRITE).objectStore('events').getAll();
+  const request = db.transaction(["events"], window.IDBTransaction.READ_WRITE).objectStore('events').getAll();
 
   request.onerror = (err) => {
     console.error(`Error to get all events: ${err}`)
@@ -87,7 +87,7 @@ channel1.onmessage = (event) => {
 }
 
 channel2.onmessage = (event) => {
-  objectStore = db.transaction(["events"], window.webkitIDBTransaction.READ_WRITE).objectStore("events")
+  objectStore = db.transaction(["events"], window.IDBTransaction.READ_WRITE).objectStore("events")
   switch (event.data.toDo) {
     case 'create':
       event.data.data.id = Date.now()

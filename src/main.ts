@@ -8,16 +8,23 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/serviceWorker.js')
         .then(() => {
             console.log("Service worker is registered")
-            new BroadcastChannel('sw-channel').onmessage = (event) => {
-                // this.getAllEvents()
-                console.log(event.data)
-            }
         })
         .catch(() => {
             console.log("Service worker is not registered")
         })
 } else {
     console.log("Your browser doesn't support service worker")
+}
+
+if (!("Notification" in window)) {
+    alert("This browser does not support desktop notification");
+} else if (Notification.permission !== "denied") {
+    // Notification.requestPermission().then((permission) => {
+    //     if (permission === "granted") {
+    //         this.notifications(title, msg, icon, song)
+    //     }
+    // })
+    alert("Please turn on notification")
 }
 
 const app = createApp(App)

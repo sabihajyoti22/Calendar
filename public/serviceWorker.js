@@ -75,7 +75,7 @@ const checkEvents = () => {
 const sendNotification = () => {
   const title = 'Calendar App'
   const options = {
-    body: `${currentEvent[0].title} is on ${currentEvent[0].currentHour} : ${currentEvent[0].currentMintue} ${currentEvent[0].time}`,
+    body: `${currentEvent[0].title} is on ${currentEvent[0].currentHour} : ${currentEvent[0].currentMintue < 10 ? '0' + currentEvent[0].currentMintue : currentEvent[0].currentMintue} ${currentEvent[0].time}`,
     icon: "./images/calendarLogo.jpg"
   }
   self.registration.showNotification(title, options)

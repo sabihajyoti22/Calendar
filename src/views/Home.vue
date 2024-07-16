@@ -121,6 +121,7 @@ export default {
     data() {
         function opt<T>() { return undefined as T | undefined }
         return {
+            permission: '' as string,
             year: 2024,
             years: [2024, 2025, 2026, 2027, 2028, 2029, 2030] as number[],
             cards: [] as number[],
@@ -131,25 +132,35 @@ export default {
             selectedDate: {} as date,
             currentMonth: (new Date().getMonth()) + 1,
             months: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
-            db: null as any,
-            objectStore: null as any,
             updatedValue: opt<event>(),
             channel1: new BroadcastChannel('channel1'),
             channel2: new BroadcastChannel('channel2')
         }
     },
     mounted() {
+        if (!("Notification" in window)){
+            alert("Your browser doesn't support push notification")
+        }else{
+            Notification.requestPermission().then(res => {
+                if(res === 'granted'){
+                    this.permission = res
+                }else{
+                    alert("You won't get any notification")
+                }
+            })
+        }
+
         this.cards = Array.from(Array(4), () => {
             return this.currentMonth++
         })
-        this.channel1.postMessage('initiateIndexedDB')
+        this.channel1.postMessage('initialised IndexedDB')
 
         this.channel2.onmessage = (event) => {
             if(event.data.toDo === 'getAllEvents'){
                 this.events = JSON.parse(JSON.stringify(event.data.data))
             }
-            else if(event.data.toDo === 'sendNotification'){
-                this.getEventNotification(JSON.parse(JSON.stringify(event.data.data)))
+            else if(event.data.toDo === 'sendNotification' && this.permission){
+                this.notify(JSON.parse(JSON.stringify(event.data.data)))
                 this.deleteEvent(JSON.parse(JSON.stringify(event.data.data.id)))
             }
         }
@@ -223,32 +234,18 @@ export default {
         closeModal() {
             this.openModal = false
         },
-        notifications(title: string, msg: string, icon: string, song: string) {
-            console.log(msg)
+        notify(currentEvent: event) {
+            const title: string = 'Notify Calendar'
+            const msg: string = `${currentEvent.title} is on ${currentEvent.currentHour} : ${currentEvent.currentMintue < 10 ? '0' + currentEvent.currentMintue : currentEvent.currentMintue} ${currentEvent.time}`
+            const icon: string = '/images/calendarLogo.jpg'
+            const song: string = '/notifySound.mp3'
+
             navigator.serviceWorker.getRegistrations().then(function(registrations) {
                 registrations[0].showNotification(title, {
                     icon: icon,
                     body: msg
                 })
             })
-        },
-        getEventNotification(currentEvent: event) {
-            const title: string = 'Notify Calendar'
-            const msg: string = `${currentEvent.title} is on ${currentEvent.currentHour} : ${currentEvent.currentMintue < 10 ? '0' + currentEvent.currentMintue : currentEvent.currentMintue} ${currentEvent.time}`
-            const icon: string = '/images/calendarLogo.jpg'
-            const song: string = '/notifySound.mp3'
-
-            if (!("Notification" in window)) {
-                alert("This browser does not support desktop notification");
-            } else if (Notification.permission === "granted") {
-                this.notifications(title, msg, icon, song)
-            } else if (Notification.permission !== "denied") {
-                Notification.requestPermission().then((permission) => {
-                    if (permission === "granted") {
-                        this.notifications(title, msg, icon, song)
-                    }
-                })
-            }
         }
     }
 }

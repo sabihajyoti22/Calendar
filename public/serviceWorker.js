@@ -7,11 +7,13 @@ const assets = [
   '/images/icon-144x144.png',
   '/src/views/Offline.vue'
 ]
-
 let db = null
+let objectStore = null
 let events = []
 let currentEvent = null
 let today = null
+const channel1 = new BroadcastChannel('channel1')
+const channel2 = new BroadcastChannel('channel2')
 
 const initiateIndexedDB = () => {
   const request = indexedDB.open("Calendar", 1)
@@ -22,9 +24,14 @@ const initiateIndexedDB = () => {
 
   request.onsuccess = (evt) => {
     db = evt.target.result
-    if(db.objectStoreNames.length){
-      getAllEvents()
-    }
+    getAllEvents()
+    checkEvents()
+  }
+
+  request.onupgradeneeded = (evt) => {
+    db = evt.target.result
+    const objectStore = db.createObjectStore("events", { keyPath: "id" })
+    objectStore.createIndex("id", "id", { unique: true })
   }
 }
 
@@ -37,18 +44,31 @@ const getAllEvents = () => {
 
   request.onsuccess = () => {
     events = JSON.parse(JSON.stringify(request.result))
-    console.log(events)
+    channel2.postMessage(events)
+  }
+}
+
+const checkEvents = () => {
+  const request = db.transaction('events').objectStore('events').getAll();
+
+  request.onerror = (err) => {
+    console.error(`Error to get all events: ${err}`)
+  }
+
+  request.onsuccess = () => {
+    events = JSON.parse(JSON.stringify(request.result))
+
     today = new Date()
     currentEvent = events.filter((el) => el.day === today.getDate() && (today.getMonth() + 1) === el.month && today.getFullYear() === el.year)
 
-    if(currentEvent.length){
-      if(((currentEvent[0].time === 'PM' && currentEvent[0].currentHour + 12 === new Date().getHours()) || currentEvent[0].currentHour === new Date().getHours()) && currentEvent[0].currentMintue === new Date().getMinutes()){
+    if (currentEvent.length) {
+      if (((currentEvent[0].time === 'PM' && currentEvent[0].currentHour + 12 === new Date().getHours()) || currentEvent[0].currentHour === new Date().getHours()) && currentEvent[0].currentMintue === new Date().getMinutes()) {
         sendNotification()
       }
     }
     setTimeout(() => {
-      getAllEvents()
-    }, 60000)
+      checkEvents()
+    }, 50000)
   }
 }
 
@@ -60,20 +80,45 @@ const sendNotification = () => {
   }
   self.registration.showNotification(title, options)
 
-  db.transaction(["events"], "readwrite")
-  .objectStore("events")
-  .delete(currentEvent[0].id)
+  db.transaction(["events"], "readwrite").objectStore("events").delete(currentEvent[0].id)
+
+  getAllEvents()
+}
+
+channel1.onmessage = () => {
+  initiateIndexedDB()
+}
+
+channel2.onmessage = (event) => {
+  objectStore = db.transaction(["events"], "readwrite").objectStore("events")
+  switch (event.data.toDo) {
+    case 'create':
+      event.data.data.id = Date.now()
+      objectStore.add(JSON.parse(JSON.stringify(event.data.data)))
+      getAllEvents()
+      break;
+    case 'update':
+      objectStore.put(JSON.parse(JSON.stringify(event.data.data)))
+      getAllEvents()
+      break;
+    case 'delete':
+      objectStore.delete(event.data.id)
+      getAllEvents()
+      break;
+    default:
+      console.log('No action')
+      break;
+  }
 }
 
 self.addEventListener('install', evt => {
-  console.log("Service worker installed")
+  console.log('Service worker installed')
   evt.waitUntil(
     caches.open(staticCacheName).then(cache => {
-       cache.addAll(assets)
-     }).catch(err => {
-       console.log(err)
-     }),
-    initiateIndexedDB()
+      cache.addAll(assets)
+    }).catch(err => {
+      console.log(err)
+    })
   )
 })
 
@@ -90,16 +135,6 @@ self.addEventListener('activate', evt => {
     })
   )
 })
-
-// const limitCacheSize = (name, size) => {
-//   caches.open(name).then(cache => {
-//     cache.keys().then(keys => {
-//       if (keys.length > size) {
-//         cache.delete(keys[0]).then(limitCacheSize(name, size))
-//       }
-//     })
-//   })
-// }
 
 self.addEventListener("fetch", (evt) => {
   evt.respondWith(

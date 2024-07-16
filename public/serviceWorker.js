@@ -73,11 +73,11 @@ const checkEvents = () => {
 
     if (currentEvent.length) {
       if (((currentEvent[0].time === 'PM' && currentEvent[0].currentHour + 12 === new Date().getHours()) || currentEvent[0].currentHour === new Date().getHours()) && currentEvent[0].currentMintue === new Date().getMinutes()) {
-        sendNotification()
-        // channel2.postMessage({
-        //   toDo: 'sendNotification',
-        //   data: currentEvent[0]
-        // })
+        // sendNotification()
+        channel2.postMessage({
+          toDo: 'sendNotification',
+          data: currentEvent[0]
+        })
       }
     }
     setTimeout(() => {
@@ -86,18 +86,18 @@ const checkEvents = () => {
   }
 }
 
-const sendNotification = () => {
-  const title = 'Calendar App'
-  const options = {
-    body: `${currentEvent[0].title} is on ${currentEvent[0].currentHour} : ${currentEvent[0].currentMintue < 10 ? '0' + currentEvent[0].currentMintue : currentEvent[0].currentMintue} ${currentEvent[0].time}`,
-    icon: "./images/calendarLogo.jpg"
-  }
-  self.registration.showNotification(title, options)
+// const sendNotification = () => {
+//   const title = 'Calendar App'
+//   const options = {
+//     body: `${currentEvent[0].title} is on ${currentEvent[0].currentHour} : ${currentEvent[0].currentMintue < 10 ? '0' + currentEvent[0].currentMintue : currentEvent[0].currentMintue} ${currentEvent[0].time}`,
+//     icon: "./images/calendarLogo.jpg"
+//   }
+//   self.registration.showNotification(title, options)
 
-  db.transaction(["events"], "readwrite").objectStore("events").delete(currentEvent[0].id)
+//   db.transaction(["events"], "readwrite").objectStore("events").delete(currentEvent[0].id)
 
-  getAllEvents()
-}
+//   getAllEvents()
+// }
 
 channel1.onmessage = () => {
   initiateIndexedDB()

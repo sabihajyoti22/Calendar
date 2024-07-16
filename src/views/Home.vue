@@ -148,15 +148,11 @@ export default {
             if(event.data.toDo === 'getAllEvents'){
                 this.events = JSON.parse(JSON.stringify(event.data.data))
             }
-            // else if(event.data.toDo === 'sendNotification'){
-            //     this.getEventNotification(JSON.parse(JSON.stringify(event.data.data)))
-            //     this.deleteEvent(JSON.parse(JSON.stringify(event.data.data.id)))
-            // }
+            else if(event.data.toDo === 'sendNotification'){
+                this.getEventNotification(JSON.parse(JSON.stringify(event.data.data)))
+                this.deleteEvent(JSON.parse(JSON.stringify(event.data.data.id)))
+            }
         }
-
-        navigator.serviceWorker.getRegistrations().then(function(registrations) {
-            registrations[0].showNotification("Title", {body: 'MSG'});
-        });
     },
     methods: {
         previous() {
@@ -228,9 +224,11 @@ export default {
             this.openModal = false
         },
         notifications(title: string, msg: string, icon: string, song: string) {
-            new Notification(title, {
-                icon: icon,
-                body: msg
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                registrations[0].showNotification(title, {
+                    // icon: icon,
+                    body: msg
+                })
             })
         },
         getEventNotification(currentEvent: event) {

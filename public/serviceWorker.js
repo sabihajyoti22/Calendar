@@ -1,12 +1,12 @@
-// const staticCacheName = "site-static-v1"
-// const dynamicCacheName = "site-dynamic-v1"
-// const offlineURL = '/src/views/Offline.vue'
-// const assets = [
-//   '/src/style.css',
-//   '/src/assets/fonts/LilitaOne-Regular.ttf',
-//   '/images/icon-144x144.png',
-//   '/src/views/Offline.vue'
-// ]
+const staticCacheName = "site-static-v1"
+const dynamicCacheName = "site-dynamic-v1"
+const offlineURL = '/src/views/Offline.vue'
+const assets = [
+  '/src/style.css',
+  '/src/assets/fonts/LilitaOne-Regular.ttf',
+  '/images/icon-144x144.png',
+  '/src/views/Offline.vue'
+]
 
 let db = null
 let objectStore = null
@@ -38,7 +38,7 @@ const initiateIndexedDB = () => {
 }
 
 const getAllEvents = () => {
-  const request = db.transaction(["events"], IDBTransaction.READ_WRITE).objectStore('events').getAll();
+  const request = db.transaction('events').objectStore('events').getAll();
 
   request.onerror = (err) => {
     console.error(`Error to get all events: ${err}`)
@@ -54,7 +54,7 @@ const getAllEvents = () => {
 }
 
 const checkEvents = () => {
-  const request = db.transaction(["events"], IDBTransaction.READ_WRITE).objectStore('events').getAll();
+  const request = db.transaction('events').objectStore('events').getAll();
 
   request.onerror = (err) => {
     console.error(`Error to get all events: ${err}`)
@@ -87,7 +87,7 @@ channel1.onmessage = (event) => {
 }
 
 channel2.onmessage = (event) => {
-  objectStore = db.transaction(["events"], IDBTransaction.READ_WRITE).objectStore("events")
+  objectStore = db.transaction(["events"], "readwrite").objectStore("events")
   switch (event.data.toDo) {
     case 'create':
       event.data.data.id = Date.now()
@@ -108,7 +108,7 @@ channel2.onmessage = (event) => {
   }
 }
 
-self.addEventListener('install', (evt) => {
+self.addEventListener('install', evt => {
   console.log('Service worker installed')
   // evt.waitUntil(
   //   caches.open(staticCacheName).then(cache => {
@@ -119,7 +119,7 @@ self.addEventListener('install', (evt) => {
   // )
 })
 
-self.addEventListener('activate', (evt) => {
+self.addEventListener('activate', evt => {
   console.log("Service worker activated")
   // evt.waitUntil(
   //   caches.keys().then(keys => {

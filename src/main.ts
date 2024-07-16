@@ -16,17 +16,6 @@ if ('serviceWorker' in navigator) {
     console.log("Your browser doesn't support service worker")
 }
 
-if (!("Notification" in window)) {
-    alert("This browser does not support desktop notification");
-} else if (Notification.permission !== "denied") {
-    // Notification.requestPermission().then((permission) => {
-    //     if (permission === "granted") {
-    //         this.notifications(title, msg, icon, song)
-    //     }
-    // })
-    alert("Please turn on notification")
-}
-
 const app = createApp(App)
 app.use(router)
 app.use(apiCallsPlugin)

@@ -143,8 +143,14 @@ export default {
             return this.currentMonth++
         })
         this.channel1.postMessage('initiateIndexedDB')
+
         this.channel2.onmessage = (event) => {
-            this.events = JSON.parse(JSON.stringify(event.data))
+            if(event.data.toDo === 'getAllEvents'){
+                this.events = JSON.parse(JSON.stringify(event.data.data))
+            }else if(event.data.toDo === 'sendNotification'){
+                this.getEventNotification(JSON.parse(JSON.stringify(event.data.data)))
+                this.deleteEvent(JSON.parse(JSON.stringify(event.data.data.id)))
+            }
         }
     },
     methods: {
@@ -215,6 +221,30 @@ export default {
         },
         closeModal() {
             this.openModal = false
+        },
+        notifications(title: string, msg: string, icon: string, song: string) {
+            new Notification(title, {
+                icon: icon,
+                body: msg
+            })
+        },
+        getEventNotification(currentEvent: event) {
+            const title: string = 'Notify Calendar'
+            const msg: string = `${currentEvent.title} is on ${currentEvent.currentHour} : ${currentEvent.currentMintue < 10 ? '0' + currentEvent.currentMintue : currentEvent.currentMintue} ${currentEvent.time}`
+            const icon: string = '/images/calendarLogo.jpg'
+            const song: string = '/notifySound.mp3'
+
+            if (!("Notification" in window)) {
+                alert("This browser does not support desktop notification");
+            } else if (Notification.permission === "granted") {
+                this.notifications(title, msg, icon, song)
+            } else if (Notification.permission !== "denied") {
+                Notification.requestPermission().then((permission) => {
+                    if (permission === "granted") {
+                        this.notifications(title, msg, icon, song)
+                    }
+                })
+            }
         }
     }
 }

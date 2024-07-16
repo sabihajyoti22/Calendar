@@ -212,7 +212,8 @@ export default {
             this.openModal = true
         },
         getData(event: event) {
-            if (event.id) {
+            if(event){
+                if (event.id) {
                 this.channel2.postMessage({
                     toDo: 'update',
                     data: JSON.parse(JSON.stringify(event))
@@ -222,6 +223,7 @@ export default {
                     toDo: 'create',
                     data: JSON.parse(JSON.stringify(event))
                 })
+            }
             }
             this.closeModal()
         },

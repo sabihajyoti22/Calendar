@@ -147,10 +147,11 @@ export default {
         this.channel2.onmessage = (event) => {
             if(event.data.toDo === 'getAllEvents'){
                 this.events = JSON.parse(JSON.stringify(event.data.data))
-            }else if(event.data.toDo === 'sendNotification'){
-                this.getEventNotification(JSON.parse(JSON.stringify(event.data.data)))
-                this.deleteEvent(JSON.parse(JSON.stringify(event.data.data.id)))
             }
+            // else if(event.data.toDo === 'sendNotification'){
+            //     this.getEventNotification(JSON.parse(JSON.stringify(event.data.data)))
+            //     this.deleteEvent(JSON.parse(JSON.stringify(event.data.data.id)))
+            // }
         }
     },
     methods: {

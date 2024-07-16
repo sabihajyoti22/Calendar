@@ -152,15 +152,11 @@ export default {
                 this.getEventNotification(JSON.parse(JSON.stringify(event.data.data)))
                 this.deleteEvent(JSON.parse(JSON.stringify(event.data.data.id)))
             }
-            this.getEventNotification({
-                id: '01565479',
-                title: 'Event 1',
-                currentHour: 6,
-                currentMintue: 12,
-                time: 'PM',
-                year: 2024,
-                month: 7,
-                day: 16
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                registrations[0].showNotification('Title', {
+                    // icon: icon,
+                    body: 'Msg'
+                })
             })
         }
     },

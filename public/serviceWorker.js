@@ -50,9 +50,9 @@ const getAllEvents = () => {
     })
   }
 
-  self.registration.showNotification('Calendar App', {
-    body: "Msg"
-  });
+  // self.registration.showNotification('Calendar App', {
+  //   body: "Msg"
+  // });
   // navigator.serviceWorker.getRegistrations().then(function (registrations) {
   //   console.log(registrations)
   // });

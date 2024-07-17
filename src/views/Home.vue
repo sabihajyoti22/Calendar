@@ -132,7 +132,7 @@ export default {
             currentMonth: (new Date().getMonth()) + 1,
             months: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
             updatedValue: opt<event>(),
-            channel1: new BroadcastChannel('channel1'),
+            // channel1: new BroadcastChannel('channel1'),
             channel2: new BroadcastChannel('channel2')
         }
     },
@@ -150,7 +150,7 @@ export default {
         this.cards = Array.from(Array(4), () => {
             return this.currentMonth++
         })
-        this.channel1.postMessage('initialised IndexedDB')
+        // this.channel1.postMessage('initialised IndexedDB')
 
         this.channel2.onmessage = (event) => {
             if(event.data.toDo === 'getAllEvents'){

@@ -97,16 +97,17 @@
                     <div class="text-title md:text-title0 line-clamp-1">{{ item.title }}</div>
                     <div class="text-gray-400 text-body1 md:text-title">{{ `${item.currentHour < 10 ? '0' +
                         item.currentHour : item.currentHour} : ${item.currentMintue < 10 ? '0' + item.currentMintue
-                            : item.currentMintue} ${item.time}` }}</div>
+                            : item.currentMintue} ${item.time}` }}
                     </div>
                 </div>
             </div>
-
-            <div v-if="openModal" class="overlay">
-                <CreateEvent :selected-date="selectedDate" :updatedValue="updatedValue" @send-data="getData"
-                    @close="closeModal" />
-            </div>
         </div>
+
+        <div v-if="openModal" class="overlay">
+            <CreateEvent :selected-date="selectedDate" :updatedValue="updatedValue" @send-data="getData"
+                @close="closeModal" />
+        </div>
+    </div>
 </template>
 
 <script lang="ts">
@@ -132,24 +133,15 @@ export default {
             currentMonth: (new Date().getMonth()) + 1,
             months: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
             updatedValue: opt<event>(),
-            // channel1: new BroadcastChannel('channel1'),
-            channel2: new BroadcastChannel('channel2')
+            channel2: new BroadcastChannel('channel2'),
+            // channel1: new BroadcastChannel('channel1')
         }
     },
     mounted() {
-        if (!("Notification" in window)){
-            alert("Your browser doesn't support push notification")
-        }else{
-            Notification.requestPermission().then(res => {
-                if(res !== 'granted'){
-                    alert("You won't get any notification")
-                }
-            })
-        }
-
         this.cards = Array.from(Array(4), () => {
             return this.currentMonth++
         })
+
         // this.channel1.postMessage('initialised IndexedDB')
 
         this.channel2.onmessage = (event) => {

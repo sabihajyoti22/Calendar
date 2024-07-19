@@ -8,65 +8,88 @@
       class="w-full p-3 text-title md:text-title0 text-secondary1 placeholder:text-secondary1 placeholder:opacity-50 placeholder:text-title0 appearance-none outline-none"
       placeholder="Add title">
 
-    <div class="flex justify-center items-center gap-3 mb-3">
-      <div class="grid place-content-center">
-        <button @click="decreaseHour" class="rotate-90" :disabled="event.currentHour === 1">
+    <div class="flex justify-center items-center gap-3 mb-5">
+      <div class="grid place-content-center relative">
+        <button @click="changeHour('-')" class="rotate-90" :disabled="event.currentHour === 1">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path d="M14.0703 6L8 12.0703L14.0703 18.1406L15.5703 16.6406L11 12.0703L15.5703 7.5L14.0703 6Z"
               fill="#7A6FCB" />
           </svg>
         </button>
+
         <div id="scrollbar" class="max-h-[120px] overflow-y-hidden hour">
-          <div v-for="hour in  hours " :key="hour"
-            class="text-title1 text-secondary1 text-center ease-in-out duration-500 py-1"
-            :style="{ transform: `scale(${hour == event.currentHour ? 1 : 0.7})`, opacity: `${hour == event.currentHour ? 1 : 0.5}` }">
-            {{ hour < 10 ? '0' + hour : hour }} </div>
-          </div>
-          <button @click="increaseHour" class="-rotate-90" :disabled="event.currentHour === 12">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path d="M14.0703 6L8 12.0703L14.0703 18.1406L15.5703 16.6406L11 12.0703L15.5703 7.5L14.0703 6Z"
-                fill="#7A6FCB" />
-            </svg>
-          </button>
-        </div>
-
-        <div class="text-title1 text-secondary1">
-          :
-        </div>
-
-        <div class="grid place-content-center">
-          <button @click="decreaseMintue" class="rotate-90" :disabled="event.currentMintue === 60">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path d="M14.0703 6L8 12.0703L14.0703 18.1406L15.5703 16.6406L11 12.0703L15.5703 7.5L14.0703 6Z"
-                fill="#7A6FCB" />
-            </svg>
-          </button>
-          <div id="scrollbar" class="max-h-[120px] overflow-y-hidden mintue">
-            <div v-for="mintue in  mintues " :key="mintue"
-              class="text-title1 text-secondary1 text-center ease-in-out duration-500 py-1"
-              :style="{ transform: `scale(${mintue == event.currentMintue ? 1 : 0.7})`, opacity: `${mintue == event.currentMintue ? 1 : 0.5}` }">
-              {{ mintue < 10 ? '0' + mintue : mintue }} </div>
-            </div>
-            <button @click="increaseMintue" class="-rotate-90" :disabled="event.currentMintue === 0">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path d="M14.0703 6L8 12.0703L14.0703 18.1406L15.5703 16.6406L11 12.0703L15.5703 7.5L14.0703 6Z"
-                  fill="#7A6FCB" />
-              </svg>
-            </button>
-          </div>
-
-          <div class="text-title0 text-secondary1 flex flex-col">
-            <button @click="event.time = 'AM'" class="ease-in-out duration-300"
-              :class="event.time === 'AM' ? 'opacity-100 scale-100' : 'opacity-50 scale-75'">AM</button>
-            <button @click="event.time = 'PM'" class="ease-in-out duration-300"
-              :class="event.time === 'PM' ? 'opacity-100 scale-100' : 'opacity-50 scale-75'">PM</button>
+          <div @click="showHours = true" v-for="hour in  hours " :key="hour" class="text-title1 text-secondary1 text-center ease-in-out duration-500 py-1" :style="{ transform: `scale(${hour == event.currentHour ? 1 : 0.7})`, opacity: `${hour == event.currentHour ? 1 : 0.5}` }">
+            {{ hour < 10 ? '0' + hour : hour }} 
           </div>
         </div>
 
-        <button :disabled="!event.title" @click="saveButton"
-          class=" w-full py-1 bg-primary1 text-title text-white rounded-md mb-2 disabled:bg-primary1/55">Save</button>
-        <button @click="closeButton" class="w-full py-1 bg-pink text-title text-white rounded-md">Close</button>
+        <button @click="changeHour('+')" class="-rotate-90" :disabled="event.currentHour === 12">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M14.0703 6L8 12.0703L14.0703 18.1406L15.5703 16.6406L11 12.0703L15.5703 7.5L14.0703 6Z"
+              fill="#7A6FCB" />
+          </svg>
+        </button>
+
+        <div v-if="showHours" class="grid grid-cols-2 gap-2 absolute top-4 -left-28 py-1 px-2 border rounded bg-white text-title1 text-secondary1 shadow-md z-50">
+          <div @click="changeHour(item*2)" class="text-center p-1 hover:cursor-pointer hover:bg-secondary1/20 rounded" v-for="item in 6" :key="item">
+            {{ item*2 < 10 ? '0'+item*2 : item*2 }}
+          </div>
+        </div>
       </div>
+
+      <div class="text-title1 text-secondary1">
+        :
+      </div>
+
+      <div class="grid place-content-center relative">
+        <button @click="changeMintue('-')" class="rotate-90" :disabled="event.currentMintue === 60">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M14.0703 6L8 12.0703L14.0703 18.1406L15.5703 16.6406L11 12.0703L15.5703 7.5L14.0703 6Z"
+              fill="#7A6FCB" />
+          </svg>
+        </button>
+
+        <div id="scrollbar" class="max-h-[120px] overflow-y-hidden mintue">
+          <div  @click="showMintues = true" v-for="mintue in  mintues " :key="mintue"
+            class="text-title1 text-secondary1 text-center ease-in-out duration-500 py-1"
+            :style="{ transform: `scale(${mintue == event.currentMintue ? 1 : 0.7})`, opacity: `${mintue == event.currentMintue ? 1 : 0.5}` }">
+            {{ mintue < 10 ? '0' + mintue : mintue }} 
+          </div>
+        </div>
+
+        <button @click="changeMintue('+')" class="-rotate-90" :disabled="event.currentMintue === 0">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M14.0703 6L8 12.0703L14.0703 18.1406L15.5703 16.6406L11 12.0703L15.5703 7.5L14.0703 6Z"
+              fill="#7A6FCB" />
+          </svg>
+        </button>
+        <div v-if="showMintues" class="grid grid-cols-2 gap-2 absolute top-4 -right-28 py-1 px-2 border rounded bg-white text-title1 text-secondary1 shadow-md z-50">
+          <div @click="changeMintue(item*10)" class="text-center p-1 hover:cursor-pointer hover:bg-secondary1/20 rounded" v-for="item in 6" :key="item">
+            {{ item*10 }}
+          </div>
+        </div>
+      </div>
+
+        <div class="text-title0 text-secondary1 flex flex-col">
+          <button @click="event.time = 'AM'" class="ease-in-out duration-300"
+            :class="event.time === 'AM' ? 'opacity-100 scale-100' : 'opacity-50 scale-75'">AM</button>
+          <button @click="event.time = 'PM'" class="ease-in-out duration-300"
+            :class="event.time === 'PM' ? 'opacity-100 scale-100' : 'opacity-50 scale-75'">PM</button>
+        </div>
+      </div>
+
+      <button 
+        :disabled="!event.title" 
+        @click="saveButton"
+        class="w-full py-1 bg-primary1 text-title text-white rounded-md mb-2 disabled:bg-primary1/55">
+        Save
+      </button>
+      <button
+        @click="closeButton" 
+        class="w-full py-1 bg-pink text-title text-white rounded-md">
+        Close
+      </button>
+    </div>
 </template>
 
 <script lang="ts">
@@ -83,7 +106,9 @@ export default {
         time: 'AM',
       } as event,
       hourScroll: 0 as any,
-      mintueScroll: 0 as any
+      mintueScroll: 0 as any,
+      showHours: false as boolean,
+      showMintues: false as boolean
     }
   },
   emits: ['sendData', 'close'],
@@ -124,21 +149,27 @@ export default {
     }
   },
   methods: {
-    increaseHour() {
-      this.hourScroll.scrollTop += 40
-      this.event.currentHour++
+    changeHour(hour: any){
+      this.showHours = false
+      if(hour === '+'){
+        this.event.currentHour++
+      }else if(hour === '-'){
+        this.event.currentHour--
+      }else{
+        this.event.currentHour = hour
+      }
+      this.hourScroll.scrollTop = (this.event.currentHour - 2) * 40
     },
-    decreaseHour() {
-      this.hourScroll.scrollTop -= 40
-      this.event.currentHour--
-    },
-    increaseMintue() {
-      this.mintueScroll.scrollTop += 40
-      this.event.currentMintue++
-    },
-    decreaseMintue() {
-      this.mintueScroll.scrollTop -= 40
-      this.event.currentMintue--
+    changeMintue(mintue: any){
+      this.showMintues = false
+      if(mintue === '+'){
+        this.event.currentMintue++
+      }else if(mintue === '-'){
+        this.event.currentMintue--
+      }else{
+        this.event.currentMintue = mintue
+      }
+      this.mintueScroll.scrollTop = (this.event.currentMintue - 1) * 40
     },
     saveButton() {
       this.event = { ...this.selectedDate, ...this.event }

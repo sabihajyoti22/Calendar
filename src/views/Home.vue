@@ -231,8 +231,8 @@ export default {
             const msg: string = `${currentEvent.title} is on ${currentEvent.currentHour} : ${currentEvent.currentMintue < 10 ? '0' + currentEvent.currentMintue : currentEvent.currentMintue} ${currentEvent.time}`
             const icon: string = '/images/calendarLogo.jpg'
 
-            navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                registrations[0].showNotification(title, {
+            navigator.serviceWorker.ready.then(function(registrations) {
+                registrations.showNotification(title, {
                     icon: icon,
                     body: msg,
                     tag: 'calendar'

@@ -153,12 +153,6 @@ export default {
                 this.deleteEvent(JSON.parse(JSON.stringify(event.data.data.id)))
             }
         }
-
-        navigator.serviceWorker.getRegistrations().then(function(registrations) {
-            registrations[0].showNotification("Test", {
-                body: "Test"
-            })
-        })
     },
     methods: {
         previous() {
@@ -236,7 +230,6 @@ export default {
             const title: string = 'Notify Calendar'
             const msg: string = `${currentEvent.title} is on ${currentEvent.currentHour} : ${currentEvent.currentMintue < 10 ? '0' + currentEvent.currentMintue : currentEvent.currentMintue} ${currentEvent.time}`
             const icon: string = '/images/calendarLogo.jpg'
-            // const song: string = '/notifySound.mp3'
 
             navigator.serviceWorker.getRegistrations().then(function(registrations) {
                 registrations[0].showNotification(title, {

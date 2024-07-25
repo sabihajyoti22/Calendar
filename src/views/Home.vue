@@ -134,7 +134,7 @@ export default {
             months: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
             updatedValue: opt<event>(),
             channel2: new BroadcastChannel('channel2'),
-            // channel1: new BroadcastChannel('channel1')
+            channel1: new BroadcastChannel('channel1')
         }
     },
     mounted() {
@@ -142,10 +142,10 @@ export default {
             return this.currentMonth++
         })
 
-        // this.channel1.postMessage('initialised IndexedDB')
+        this.channel1.postMessage('initialised IndexedDB')
 
         this.channel2.onmessage = (event) => {
-            if(event.data.toDo === 'getAllEvents'){
+            if(event.data.toDo === "getAllEvents"){
                 this.events = JSON.parse(JSON.stringify(event.data.data))
             }
             else if(event.data.toDo === 'sendNotification' && Notification.permission === 'granted'){

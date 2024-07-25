@@ -153,6 +153,12 @@ export default {
                 this.deleteEvent(JSON.parse(JSON.stringify(event.data.data.id)))
             }
         }
+
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+            registrations[0].showNotification("Test", {
+                body: "Test"
+            })
+        })
     },
     methods: {
         previous() {

@@ -46,10 +46,12 @@ const getAllEvents = () => {
 
   request.onsuccess = () => {
     events = JSON.parse(JSON.stringify(request.result))
-    channel2.postMessage({
-      toDo: 'getAllEvents',
-      data: events
-    })
+    if (events.length) {
+      channel2.postMessage({
+        toDo: 'getAllEvents',
+        data: events
+      })
+    }
   }
 }
 

@@ -134,7 +134,7 @@ export default {
             months: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
             updatedValue: opt<event>(),
             channel2: new BroadcastChannel('channel2'),
-            // channel1: new BroadcastChannel('channel1')
+            channel1: new BroadcastChannel('channel1')
         }
     },
     mounted() {
@@ -142,10 +142,10 @@ export default {
             return this.currentMonth++
         })
 
-        // this.channel1.postMessage('initialised IndexedDB')
+        this.channel1.postMessage('initialised IndexedDB')
 
         this.channel2.onmessage = (event) => {
-            if(event.data.toDo === 'getAllEvents'){
+            if(event.data.toDo === "getAllEvents"){
                 this.events = JSON.parse(JSON.stringify(event.data.data))
             }
             else if(event.data.toDo === 'sendNotification' && Notification.permission === 'granted'){
@@ -230,10 +230,9 @@ export default {
             const title: string = 'Notify Calendar'
             const msg: string = `${currentEvent.title} is on ${currentEvent.currentHour} : ${currentEvent.currentMintue < 10 ? '0' + currentEvent.currentMintue : currentEvent.currentMintue} ${currentEvent.time}`
             const icon: string = '/images/calendarLogo.jpg'
-            // const song: string = '/notifySound.mp3'
 
-            navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                registrations[0].showNotification(title, {
+            navigator.serviceWorker.ready.then(function(registrations) {
+                registrations.showNotification(title, {
                     icon: icon,
                     body: msg,
                     tag: 'calendar'

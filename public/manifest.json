@@ -1,7 +1,7 @@
 {
   "name": "Notify Calendar",
   "short_name": "Notify Calendar",
-  "start_url": "../index.html",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#41D1FF",

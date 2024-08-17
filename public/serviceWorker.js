@@ -35,6 +35,8 @@ const initiateIndexedDB = () => {
     const objectStore = db.createObjectStore("events", { keyPath: "id" })
     objectStore.createIndex("id", "id", { unique: true })
   }
+
+  console.log('Initiate IndexedDB')
 }
 
 const getAllEvents = () => {
@@ -80,10 +82,17 @@ const checkEvents = () => {
   }
 }
 
-channel1.onmessage = (event) => {
+// channel1.onmessage = (event) => {
+//   console.log(event.data)
+//   initiateIndexedDB()
+// }
+
+self.addEventListener('message', (event) => {
+  // if (event.data && event.data.type === 'MSG_ID') {
+  //   //Process message
+  // }
   console.log(event.data)
-  initiateIndexedDB()
-}
+});
 
 channel2.onmessage = (event) => {
   objectStore = db.transaction(["events"], "readwrite").objectStore("events")
@@ -120,6 +129,7 @@ self.addEventListener('install', evt => {
 
 self.addEventListener('activate', evt => {
   console.log("Service worker activated")
+  initiateIndexedDB()
   // evt.waitUntil(
   //   caches.keys().then(keys => {
   //     return Promise.all(keys

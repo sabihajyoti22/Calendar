@@ -4,8 +4,6 @@ import router from "./router"
 import apiCallsPlugin from './plugin/apiCalls.ts'
 import './style.css'
 
-// const channel1 = new BroadcastChannel('channel1')
-
 if (!("Notification" in window)) {
     alert("Your browser doesn't support push notification")
 } else {
@@ -20,7 +18,6 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/serviceWorker.js')
         .then(() => {
             console.log("Service worker is registered")
-            // channel1.postMessage('initialised IndexedDB')
         })
         .catch(() => {
             console.log("Service worker is not registered")

@@ -149,6 +149,7 @@ export default {
                 this.events = JSON.parse(JSON.stringify(event.data.data))
             }
             else if(event.data.toDo === 'sendNotification' && Notification.permission === 'granted'){
+                console.log("notified")
                 this.notify(JSON.parse(JSON.stringify(event.data.data)))
                 this.deleteEvent(JSON.parse(JSON.stringify(event.data.data.id)))
             }
@@ -226,7 +227,6 @@ export default {
             this.openModal = false
         },
         notify(currentEvent: event) {
-            console.log("Notified")
             const title: string = 'Notify Calendar'
             const msg: string = `${currentEvent.title} is on ${currentEvent.currentHour} : ${currentEvent.currentMintue < 10 ? '0' + currentEvent.currentMintue : currentEvent.currentMintue} ${currentEvent.time}`
             const icon: string = '/images/calendarLogo.jpg'

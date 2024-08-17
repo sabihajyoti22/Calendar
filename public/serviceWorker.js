@@ -46,12 +46,10 @@ const getAllEvents = () => {
 
   request.onsuccess = () => {
     events = JSON.parse(JSON.stringify(request.result))
-    if (events.length) {
-      channel2.postMessage({
-        toDo: 'getAllEvents',
-        data: events
-      })
-    }
+    channel2.postMessage({
+      toDo: 'getAllEvents',
+      data: events
+    })
   }
 }
 
@@ -134,21 +132,21 @@ self.addEventListener('activate', evt => {
   // )
 })
 
-self.addEventListener("fetch", (evt) => {
-  // evt.respondWith(
-  //   caches.match(evt.request).then(cacheRes => {
-  //     return cacheRes || fetch(evt.request)
-  //       .then(fetchRes => {
-  //         return caches.open(dynamicCacheName).then(cache => {
-  //           cache.put(evt.request.url, fetchRes.clone())
-  //           return fetchRes
-  //         })
-  //       })
-  //       .catch(() => {
-  //         if (evt.request.url.indexof('.vue') >= 0) {
-  //           return caches.match(offlineURL)
-  //         }
-  //       })
-  //   })
-  // )
-})
+// self.addEventListener("fetch", (evt) => {
+//   evt.respondWith(
+//     caches.match(evt.request).then(cacheRes => {
+//       return cacheRes || fetch(evt.request)
+//         .then(fetchRes => {
+//           return caches.open(dynamicCacheName).then(cache => {
+//             cache.put(evt.request.url, fetchRes.clone())
+//             return fetchRes
+//           })
+//         })
+//         .catch(() => {
+//           if (evt.request.url.indexof('.vue') >= 0) {
+//             return caches.match(offlineURL)
+//           }
+//         })
+//     })
+//   )
+// })

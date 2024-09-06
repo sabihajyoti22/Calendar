@@ -18,11 +18,11 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/serviceWorker.js')
         .then(() => {
             console.log("Service worker is registered")
+            navigator.serviceWorker.controller?.postMessage('InitiateIndexedDB')
         })
         .catch(() => {
             console.log("Service worker is not registered")
         })
-    // navigator.serviceWorker.controller?.postMessage('Initiate IndexedDB')
 } else {
     alert("Your browser doesn't support service worker")
 }

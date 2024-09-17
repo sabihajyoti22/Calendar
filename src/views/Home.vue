@@ -134,7 +134,6 @@ export default {
             months: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
             updatedValue: opt<event>(),
             channel2: new BroadcastChannel('channel2'),
-            channel1: new BroadcastChannel('channel1'),
             msg: new MessageChannel()
         }
     },
@@ -142,8 +141,6 @@ export default {
         this.cards = Array.from(Array(4), () => {
             return this.currentMonth++
         })
-
-        this.channel1.postMessage('initialised IndexedDB')
 
         this.channel2.onmessage = (event) => {
             if(event.data.toDo === "getAllEvents"){
@@ -154,13 +151,6 @@ export default {
                 this.notify(JSON.parse(JSON.stringify(event.data.data)))
                 this.deleteEvent(JSON.parse(JSON.stringify(event.data.data.id)))
             }
-        }
-
-        navigator.serviceWorker.onmessage = (event) => {
-            console.log('event in app.js nav on msg', event);
-            // if (event.data.toUpdate) {
-            //     alert('Please refresh your page to upadate service worker');
-            // }
         }
     },
     methods: {
@@ -226,14 +216,10 @@ export default {
             this.closeModal()
         },
         deleteEvent(id: number) {
-            navigator.serviceWorker.controller?.postMessage({
+            this.channel2.postMessage({
                 toDo: 'delete',
                 id: JSON.parse(JSON.stringify(id))
             })
-            // this.channel2.postMessage({
-            //     toDo: 'delete',
-            //     id: JSON.parse(JSON.stringify(id))
-            // })
         },
         closeModal() {
             this.openModal = false

@@ -13,7 +13,7 @@ let objectStore = null
 let events = []
 let currentEvent = null
 let today = null
-let interval
+const channel1 = new BroadcastChannel('channel1')
 const channel2 = new BroadcastChannel('channel2')
 
 const initiateIndexedDB = () => {
@@ -47,10 +47,12 @@ const getAllEvents = () => {
 
   request.onsuccess = () => {
     events = JSON.parse(JSON.stringify(request.result))
-    channel2.postMessage({
-      toDo: 'getAllEvents',
-      data: events
-    })
+    setTimeout(() => {
+      channel2.postMessage({
+        toDo: 'getAllEvents',
+        data: events
+      })
+    }, 200)
   }
 }
 
@@ -81,6 +83,10 @@ const checkEvents = () => {
   }
 }
 
+channel1.onmessage = () => {
+  initiateIndexedDB()
+}
+
 channel2.onmessage = (event) => {
   objectStore = db.transaction(["events"], "readwrite").objectStore("events")
   switch (event.data.toDo) {
@@ -102,34 +108,7 @@ channel2.onmessage = (event) => {
       break;
   }
 }
-self.addEventListener('message', function (event) {
-  //Message received from client
-  // console.log(event);
-  //Send response to client using the port that was sent with the message
-  // event.ports[0].postMessage("world");
-  initiateIndexedDB()
-  if (event.data.toDo) {
-    objectStore = db.transaction(["events"], "readwrite").objectStore("events")
-    switch (event.data.toDo) {
-      case 'create':
-        event.data.data.id = Date.now()
-        objectStore.add(JSON.parse(JSON.stringify(event.data.data)))
-        getAllEvents()
-        break;
-      case 'update':
-        objectStore.put(JSON.parse(JSON.stringify(event.data.data)))
-        getAllEvents()
-        break;
-      case 'delete':
-        objectStore.delete(event.data.id)
-        getAllEvents()
-        break;
-      default:
-        console.log('No action')
-        break;
-    }
-  }
-});
+
 self.addEventListener('install', evt => {
   console.log('Service worker installed')
   evt.waitUntil(
@@ -173,25 +152,3 @@ self.addEventListener("fetch", (evt) => {
     })
   )
 })
-
-addEventListener("fetch", (event) => {
-  event.waitUntil(
-    (async () => {
-      // Exit early if we don't have access to the client.
-      // Eg, if it's cross-origin.
-      if (!event.clientId) return;
-
-      // Get the client.
-      const client = await self.clients.get(event.clientId);
-      // Exit early if we don't get the client.
-      // Eg, if it closed.
-      if (!client) return;
-
-      // Send a message to the client.
-      client.postMessage({
-        msg: "Hey I just got a fetch from you!",
-        url: event.request.url,
-      });
-    })(),
-  );
-});

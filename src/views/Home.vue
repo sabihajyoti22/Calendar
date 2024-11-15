@@ -134,7 +134,10 @@ export default {
             objectStore: null as any,
             updatedValue: null as any,
             channel1: new BroadcastChannel('channel1'),
-            channel2: new BroadcastChannel('channel2')
+            channel2: new BroadcastChannel('channel2'),
+            checked: false as boolean,
+            currentEvent: null as any,
+            today: null as any
         }
     },
     mounted() {
@@ -144,12 +147,12 @@ export default {
 
         this.initiateIndexedDB()
 
-        this.channel2.onmessage = (event) => {
-            if(event.data.toDo === 'sendNotification'){
-                this.getEventNotification(JSON.parse(JSON.stringify(event.data.data)))
-                this.deleteEvent(JSON.parse(JSON.stringify(event.data.data.id)))
-            }
-        }
+        // this.channel2.onmessage = (event) => {
+        //     if(event.data.toDo === 'sendNotification'){
+        //         this.getEventNotification(JSON.parse(JSON.stringify(event.data.data)))
+        //         this.deleteEvent(JSON.parse(JSON.stringify(event.data.data.id)))
+        //     }
+        // }
     },
     methods: {
         initiateIndexedDB() {
@@ -180,10 +183,19 @@ export default {
             request.onsuccess = () => {
                 this.events = JSON.parse(JSON.stringify(request.result))
 
-                this.channel2.postMessage({
-                    toDo: 'checkEvents',
-                    data: JSON.parse(JSON.stringify(this.events))
-                })
+                // this.channel2.postMessage({
+                //     toDo: 'checkEvents',
+                //     data: JSON.parse(JSON.stringify(this.events))
+                // })
+
+                if(this.events.length){
+                    if(!this.checked){
+                        this.checked = true
+                        this.checkEvents()
+                    }
+                }else{
+                    this.checked = false
+                }
             }
         },
         previous() {
@@ -297,6 +309,30 @@ export default {
                         this.notifications(title, msg, icon, song)
                     }
                 })
+            }
+        },
+        checkEvents(){
+            console.log(this.events)
+            console.log(this.checked)
+            this.today = new Date()
+            this.currentEvent = this.events.filter((el) => el.day === this.today.getDate() && (this.today.getMonth() + 1) === el.month && this.today.getFullYear() === el.year)
+
+            if (this.currentEvent.length) {
+                if (((this.currentEvent[0].time === 'PM' && this.currentEvent[0].currentHour + 12 === new Date().getHours()) || this.currentEvent[0].currentHour === new Date().getHours()) && this.currentEvent[0].currentMintue === new Date().getMinutes()) {
+                // sendNotification()
+                // channel2.postMessage({
+                //     toDo: 'sendNotification',
+                //     data: currentEvent[0]
+                // })
+                this.getEventNotification(this.currentEvent[0])
+                this.deleteEvent(JSON.parse(JSON.stringify(this.currentEvent[0].id)))
+                }
+            }
+            if(this.checked){
+                const timeoutVar = setTimeout(() => {
+                this.checkEvents()
+                clearTimeout(timeoutVar)
+                }, 1000)
             }
         }
     }

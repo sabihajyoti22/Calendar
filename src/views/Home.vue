@@ -97,17 +97,16 @@
                     <div class="text-title md:text-title0 line-clamp-1">{{ item.title }}</div>
                     <div class="text-gray-400 text-body1 md:text-title">{{ `${item.currentHour < 10 ? '0' +
                         item.currentHour : item.currentHour} : ${item.currentMintue < 10 ? '0' + item.currentMintue
-                            : item.currentMintue} ${item.time}` }}
+                            : item.currentMintue} ${item.time}` }}</div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div v-if="openModal" class="overlay">
-            <CreateEvent :selected-date="selectedDate" :updatedValue="updatedValue" @send-data="getData"
-                @close="closeModal" />
+            <div v-if="openModal" class="overlay">
+                <CreateEvent :selected-date="selectedDate" :updatedValue="updatedValue" @send-data="getData"
+                    @close="closeModal" />
+            </div>
         </div>
-    </div>
 </template>
 
 <script lang="ts">
@@ -132,23 +131,25 @@ export default {
             selectedDate: {} as date,
             currentMonth: (new Date().getMonth()) + 1,
             months: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
+            db: null as any,
+            objectStore: null as any,
             updatedValue: opt<event>(),
-            channel2: new BroadcastChannel('channel2'),
-            msg: new MessageChannel()
+            channel1: new BroadcastChannel('channel1'),
+            channel2: new BroadcastChannel('channel2')
         }
     },
     mounted() {
         this.cards = Array.from(Array(4), () => {
             return this.currentMonth++
         })
+        this.channel1.postMessage('initiateIndexedDB')
 
         this.channel2.onmessage = (event) => {
-            if(event.data.toDo === "getAllEvents"){
+            if(event.data.toDo === 'getAllEvents'){
                 this.events = JSON.parse(JSON.stringify(event.data.data))
             }
-            else if(event.data.toDo === 'sendNotification' && Notification.permission === 'granted'){
-                console.log("notified")
-                this.notify(JSON.parse(JSON.stringify(event.data.data)))
+            else if(event.data.toDo === 'sendNotification'){
+                this.getEventNotification(JSON.parse(JSON.stringify(event.data.data)))
                 this.deleteEvent(JSON.parse(JSON.stringify(event.data.data.id)))
             }
         }
@@ -200,8 +201,7 @@ export default {
             this.openModal = true
         },
         getData(event: event) {
-            if(event){
-                if (event.id) {
+            if (event.id) {
                 this.channel2.postMessage({
                     toDo: 'update',
                     data: JSON.parse(JSON.stringify(event))
@@ -211,7 +211,6 @@ export default {
                     toDo: 'create',
                     data: JSON.parse(JSON.stringify(event))
                 })
-            }
             }
             this.closeModal()
         },
@@ -224,18 +223,36 @@ export default {
         closeModal() {
             this.openModal = false
         },
-        notify(currentEvent: event) {
+        notifications(title: string, msg: string, icon: string, song: string) {
+            console.log(msg)
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                registrations[0].showNotification(title, {
+                    icon: icon,
+                    body: msg
+                })
+            })
+            // new Notification(title, {
+            //     icon: icon,
+            //     body: msg
+            // })
+        },
+        getEventNotification(currentEvent: event) {
             const title: string = 'Notify Calendar'
             const msg: string = `${currentEvent.title} is on ${currentEvent.currentHour} : ${currentEvent.currentMintue < 10 ? '0' + currentEvent.currentMintue : currentEvent.currentMintue} ${currentEvent.time}`
             const icon: string = '/images/calendarLogo.jpg'
+            const song: string = '/notifySound.mp3'
 
-            navigator.serviceWorker.ready.then(function(registrations) {
-                registrations.showNotification(title, {
-                    icon: icon,
-                    body: msg,
-                    tag: 'calendar'
+            if (!("Notification" in window)) {
+                alert("This browser does not support desktop notification");
+            } else if (Notification.permission === "granted") {
+                this.notifications(title, msg, icon, song)
+            } else if (Notification.permission !== "denied") {
+                Notification.requestPermission().then((permission) => {
+                    if (permission === "granted") {
+                        this.notifications(title, msg, icon, song)
+                    }
                 })
-            })
+            }
         }
     }
 }

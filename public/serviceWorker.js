@@ -107,26 +107,28 @@ channel1.onmessage = () => {
 }
 
 channel2.onmessage = (event) => {
-  objectStore = db.transaction(["events"], "readwrite").objectStore("events")
-  console.log(objectStore)
-  switch (event.data.toDo) {
-    case 'create':
-      event.data.data.id = Date.now()
-      objectStore.add(JSON.parse(JSON.stringify(event.data.data)))
-      getAllEvents()
-      break;
-    case 'update':
-      objectStore.put(JSON.parse(JSON.stringify(event.data.data)))
-      getAllEvents()
-      break;
-    case 'delete':
-      objectStore.delete(event.data.id)
-      getAllEvents()
-      break;
-    default:
-      console.log('No action')
-      break;
-  }
+  setTimeout(() => {
+    objectStore = db.transaction(["events"], "readwrite").objectStore("events")
+    console.log(objectStore)
+    switch (event.data.toDo) {
+      case 'create':
+        event.data.data.id = Date.now()
+        objectStore.add(JSON.parse(JSON.stringify(event.data.data)))
+        getAllEvents()
+        break;
+      case 'update':
+        objectStore.put(JSON.parse(JSON.stringify(event.data.data)))
+        getAllEvents()
+        break;
+      case 'delete':
+        objectStore.delete(event.data.id)
+        getAllEvents()
+        break;
+      default:
+        console.log('No action')
+        break;
+    }
+  }, 2000)
 }
 
 self.addEventListener('install', evt => {

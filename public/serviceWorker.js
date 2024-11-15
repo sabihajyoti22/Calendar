@@ -8,130 +8,48 @@
 //   '/src/views/Offline.vue'
 // ]
 
-let db = null
-let objectStore = null
 let events = []
+let checked = false
 let currentEvent = null
 let today = null
-const channel1 = new BroadcastChannel('channel1')
 const channel2 = new BroadcastChannel('channel2')
 
-const initiateIndexedDB = () => {
-  const request = indexedDB.open("Calendar", 1)
-
-  request.onerror = (err) => {
-    console.error(`Database error: ${err.target.errorCode}`);
-  }
-
-  request.onsuccess = (evt) => {
-    console.log('on success')
-    db = evt.target.result
-    getAllEvents()
-    checkEvents()
-  }
-
-  request.onupgradeneeded = (evt) => {
-    console.log('on upgrade')
-    db = evt.target.result
-    const objectStore = db.createObjectStore("events", { keyPath: "id" })
-    objectStore.createIndex("id", "id", { unique: true })
-  }
-}
-
-const getAllEvents = () => {
-  const request = db.transaction('events').objectStore('events').getAll();
-
-  request.onerror = (err) => {
-    console.error(`Error to get all events: ${err}`)
-  }
-
-  request.onsuccess = () => {
-    events = JSON.parse(JSON.stringify(request.result))
-    channel2.postMessage({
-      toDo: 'getAllEvents',
-      data: events
-    })
-  }
-
-  // self.registration.showNotification('Calendar App', {
-  //   body: "Msg"
-  // });
-  // navigator.serviceWorker.getRegistrations().then(function (registrations) {
-  //   console.log(registrations)
-  // });
-}
-
 const checkEvents = () => {
-  const request = db.transaction('events').objectStore('events').getAll();
+  console.log(events)
+  console.log(checked)
+  today = new Date()
+  currentEvent = events.filter((el) => el.day === today.getDate() && (today.getMonth() + 1) === el.month && today.getFullYear() === el.year)
 
-  request.onerror = (err) => {
-    console.error(`Error to get all events: ${err}`)
-  }
-
-  request.onsuccess = () => {
-    events = JSON.parse(JSON.stringify(request.result))
-
-    today = new Date()
-    currentEvent = events.filter((el) => el.day === today.getDate() && (today.getMonth() + 1) === el.month && today.getFullYear() === el.year)
-
-    if (currentEvent.length) {
-      if (((currentEvent[0].time === 'PM' && currentEvent[0].currentHour + 12 === new Date().getHours()) || currentEvent[0].currentHour === new Date().getHours()) && currentEvent[0].currentMintue === new Date().getMinutes()) {
-        // sendNotification()
-        channel2.postMessage({
-          toDo: 'sendNotification',
-          data: currentEvent[0]
-        })
-      }
+  if (currentEvent.length) {
+    if (((currentEvent[0].time === 'PM' && currentEvent[0].currentHour + 12 === new Date().getHours()) || currentEvent[0].currentHour === new Date().getHours()) && currentEvent[0].currentMintue === new Date().getMinutes()) {
+      // sendNotification()
+      channel2.postMessage({
+        toDo: 'sendNotification',
+        data: currentEvent[0]
+      })
     }
-    setTimeout(() => {
-      checkEvents()
-    }, 50000)
   }
-}
-
-// const sendNotification = () => {
-//   const title = 'Calendar App'
-//   const options = {
-//     body: `${currentEvent[0].title} is on ${currentEvent[0].currentHour} : ${currentEvent[0].currentMintue < 10 ? '0' + currentEvent[0].currentMintue : currentEvent[0].currentMintue} ${currentEvent[0].time}`,
-//     icon: "./images/calendarLogo.jpg"
-//   }
-//   self.registration.showNotification(title, options)
-
-//   db.transaction(["events"], "readwrite").objectStore("events").delete(currentEvent[0].id)
-
-//   getAllEvents()
-// }
-
-channel1.onmessage = () => {
-  initiateIndexedDB()
+  if(checked){
+    const timeoutVar = setTimeout(() => {
+      checkEvents()
+      clearTimeout(timeoutVar)
+    }, 1000)
+  }
 }
 
 channel2.onmessage = (event) => {
-  setTimeout(() => {
-    objectStore = db.transaction(["events"], "readwrite").objectStore("events")
-    console.log(objectStore)
-    switch (event.data.toDo) {
-      case 'create':
-        event.data.data.id = Date.now()
-        objectStore.add(JSON.parse(JSON.stringify(event.data.data)))
-        getAllEvents()
-        break;
-      case 'update':
-        objectStore.put(JSON.parse(JSON.stringify(event.data.data)))
-        getAllEvents()
-        break;
-      case 'delete':
-        objectStore.delete(event.data.id)
-        getAllEvents()
-        break;
-      default:
-        console.log('No action')
-        break;
+  events = event.data.data
+  if(events.length){
+    if(!checked){
+      checked = true
+      checkEvents()
     }
-  }, 2000)
+  }else{
+    checked = false
+  }
 }
 
-self.addEventListener('install', evt => {
+self.addEventListener('install', () => {
   console.log('Service worker installed')
   // evt.waitUntil(
   //   caches.open(staticCacheName).then(cache => {
@@ -142,7 +60,7 @@ self.addEventListener('install', evt => {
   // )
 })
 
-self.addEventListener('activate', evt => {
+self.addEventListener('activate', () => {
   console.log("Service worker activated")
   // evt.waitUntil(
   //   caches.keys().then(keys => {

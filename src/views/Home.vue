@@ -119,7 +119,6 @@ export default {
         CreateEvent
     },
     data() {
-        function opt<T>() { return undefined as T | undefined }
         return {
             year: 2024,
             years: [2024, 2025, 2026, 2027, 2028, 2029, 2030] as number[],
@@ -133,7 +132,7 @@ export default {
             months: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
             db: null as any,
             objectStore: null as any,
-            updatedValue: opt<event>(),
+            updatedValue: null as any,
             channel1: new BroadcastChannel('channel1'),
             channel2: new BroadcastChannel('channel2')
         }
@@ -142,19 +141,51 @@ export default {
         this.cards = Array.from(Array(4), () => {
             return this.currentMonth++
         })
-        this.channel1.postMessage('initiateIndexedDB')
+
+        this.initiateIndexedDB()
 
         this.channel2.onmessage = (event) => {
-            if(event.data.toDo === 'getAllEvents'){
-                this.events = JSON.parse(JSON.stringify(event.data.data))
-            }
-            else if(event.data.toDo === 'sendNotification'){
+            if(event.data.toDo === 'sendNotification'){
                 this.getEventNotification(JSON.parse(JSON.stringify(event.data.data)))
                 this.deleteEvent(JSON.parse(JSON.stringify(event.data.data.id)))
             }
         }
     },
     methods: {
+        initiateIndexedDB() {
+            const request = indexedDB.open("Calendar", 1)
+
+            request.onerror = (err: any) => {
+                console.error(`Database error: ${err.target.errorCode}`);
+            }
+
+            request.onsuccess = (evt: any) => {
+                this.db = evt.target.result
+                this.getAllEvents()
+            }
+
+            request.onupgradeneeded = (evt: any) => {
+                this.db = evt.target.result
+                const objectStore = this.db.createObjectStore("events", { keyPath: "id" })
+                objectStore.createIndex("id", "id", { unique: true })
+            }
+        },
+        getAllEvents() {
+            const request = this.db.transaction('events').objectStore('events').getAll();
+
+            request.onerror = (err: any) => {
+                console.error(`Error to get all events: ${err}`)
+            }
+
+            request.onsuccess = () => {
+                this.events = JSON.parse(JSON.stringify(request.result))
+
+                this.channel2.postMessage({
+                    toDo: 'checkEvents',
+                    data: JSON.parse(JSON.stringify(this.events))
+                })
+            }
+        },
         previous() {
             if (this.cards[0] !== 1) {
                 this.currentMonth = 0
@@ -201,24 +232,42 @@ export default {
             this.openModal = true
         },
         getData(event: event) {
+            this.objectStore = this.db
+                .transaction(["events"], "readwrite")
+                .objectStore("events")
             if (event.id) {
-                this.channel2.postMessage({
-                    toDo: 'update',
-                    data: JSON.parse(JSON.stringify(event))
-                })
+                this.updateEvent(event)
             } else {
-                this.channel2.postMessage({
-                    toDo: 'create',
-                    data: JSON.parse(JSON.stringify(event))
-                })
+                this.createEvent(event)
             }
+        },
+        createEvent(event: event) {
+            event.id = Date.now()
+            const request = this.objectStore.add(JSON.parse(JSON.stringify(event)))
+
+            request.onsuccess = () => {
+                this.getAllEvents()
+            }
+
+            this.closeModal()
+        },
+        updateEvent(event: event) {
+            const request = this.objectStore.put(JSON.parse(JSON.stringify(event)))
+
+            request.onsuccess = () => {
+                this.getAllEvents()
+            }
+
             this.closeModal()
         },
         deleteEvent(id: number) {
-            this.channel2.postMessage({
-                toDo: 'delete',
-                id: JSON.parse(JSON.stringify(id))
-            })
+            const request = this.db
+                .transaction(["events"], "readwrite")
+                .objectStore("events")
+                .delete(id)
+            request.onsuccess = () => {
+                this.getAllEvents()
+            }
         },
         closeModal() {
             this.openModal = false
@@ -231,10 +280,6 @@ export default {
                     body: msg
                 })
             })
-            // new Notification(title, {
-            //     icon: icon,
-            //     body: msg
-            // })
         },
         getEventNotification(currentEvent: event) {
             const title: string = 'Notify Calendar'

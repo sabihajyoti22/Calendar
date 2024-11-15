@@ -4,8 +4,7 @@ import tseslint from "typescript-eslint"
 import pluginVue from "eslint-plugin-vue"
 
 export default [
-  { files: ["**/*.{vue,js}"] },
-  { files: ["**/*.vue"], languageOptions: { globals: globals.browser } },
+  { files: ["**/*.js", "**/*.vue"], languageOptions: { globals: globals.browser } },
   pluginJs.configs.recommended,
   ...tseslint.configs.recommended,
   ...pluginVue.configs["flat/recommended"],

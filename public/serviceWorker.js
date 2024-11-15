@@ -24,12 +24,14 @@ const initiateIndexedDB = () => {
   }
 
   request.onsuccess = (evt) => {
+    console.log('on success')
     db = evt.target.result
     getAllEvents()
     checkEvents()
   }
 
   request.onupgradeneeded = (evt) => {
+    console.log('on upgrade')
     db = evt.target.result
     const objectStore = db.createObjectStore("events", { keyPath: "id" })
     objectStore.createIndex("id", "id", { unique: true })

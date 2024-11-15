@@ -8,47 +8,6 @@
 //   '/src/views/Offline.vue'
 // ]
 
-let events = []
-let checked = false
-let currentEvent = null
-let today = null
-const channel2 = new BroadcastChannel('channel2')
-
-const checkEvents = () => {
-  console.log(events)
-  console.log(checked)
-  today = new Date()
-  currentEvent = events.filter((el) => el.day === today.getDate() && (today.getMonth() + 1) === el.month && today.getFullYear() === el.year)
-
-  if (currentEvent.length) {
-    if (((currentEvent[0].time === 'PM' && currentEvent[0].currentHour + 12 === new Date().getHours()) || currentEvent[0].currentHour === new Date().getHours()) && currentEvent[0].currentMintue === new Date().getMinutes()) {
-      // sendNotification()
-      channel2.postMessage({
-        toDo: 'sendNotification',
-        data: currentEvent[0]
-      })
-    }
-  }
-  if(checked){
-    const timeoutVar = setTimeout(() => {
-      checkEvents()
-      clearTimeout(timeoutVar)
-    }, 1000)
-  }
-}
-
-channel2.onmessage = (event) => {
-  events = event.data.data
-  if(events.length){
-    if(!checked){
-      checked = true
-      checkEvents()
-    }
-  }else{
-    checked = false
-  }
-}
-
 self.addEventListener('install', () => {
   console.log('Service worker installed')
   // evt.waitUntil(

@@ -106,7 +106,7 @@ channel1.onmessage = () => {
 
 channel2.onmessage = (event) => {
   objectStore = db.transaction(["events"], "readwrite").objectStore("events")
-  console.log(event.data)
+  console.log(objectStore)
   switch (event.data.toDo) {
     case 'create':
       event.data.data.id = Date.now()
